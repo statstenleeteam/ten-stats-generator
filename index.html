@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>TEN STATS - Generator</title>
+    <!-- โหลดตัวช่วยสำหรับแปลงเว็บเป็นรูปภาพ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        /* ส่วนนี้คือการตกแต่งความสวยงาม (CSS) */
+        body {
+            background-color: #e5e7eb; /* สีเทาอ่อนพื้นหลัง */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px;
+        }
+
+        /* กล่องสถิติ (อิงจากดีไซน์ Canva ของคุณ) */
+        .stat-box {
+            background-color: #1e1e24; /* สีพื้นหลังกล่อง */
+            color: #ffffff;
+            width: 350px;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        /* หัวข้อ */
+        .header {
+            color: #a855f7; /* สีม่วง */
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-bottom: 3px solid #a855f7;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* ตารางข้อมูลแต่ละบรรทัด */
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .platform-name { color: #d1d5db; }
+        
+        /* สีลูกศรขึ้นลง */
+        .up { color: #10b981; font-weight: bold; font-size: 12px; }
+        .down { color: #ef4444; font-weight: bold; font-size: 12px; }
+
+        /* ปุ่มดาวน์โหลด */
+        .btn-download {
+            margin-top: 30px;
+            background-color: #a855f7;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-download:hover { background-color: #9333ea; }
+    </style>
+</head>
+<body>
+
+    <!-- ส่วนที่จะแคปเจอร์เป็นรูปภาพ -->
+    <div id="capture-area" class="stat-box">
+        <div class="header">SOCIAL FOLLOWERS</div>
+        
+        <div class="row">
+            <span class="platform-name">Instagram</span>
+            <span>10,227,971 <span class="down">▼ (-87)</span></span>
+        </div>
+        
+        <div class="row">
+            <span class="platform-name">TikTok</span>
+            <span>896,228 <span class="up">▲ (+56)</span></span>
+        </div>
+
+        <div class="row">
+            <span class="platform-name">Douyin</span>
+            <span>1,250,234 <span class="up">▲ (+1,574)</span></span>
+        </div>
+    </div>
+
+    <!-- ปุ่มกด -->
+    <button class="btn-download" onclick="saveAsImage()">📸 ดาวน์โหลดรูปภาพ</button>
+
+    <!-- ส่วนที่สั่งให้ปุ่มทำงาน (JavaScript) -->
+    <script>
+        function saveAsImage() {
+            const box = document.getElementById('capture-area');
+            html2canvas(box, { scale: 3, backgroundColor: '#1e1e24' }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'social-followers-stat.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
+
+</body>
+</html>
