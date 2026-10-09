@@ -3,106 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <title>TEN STATS - Generator</title>
-    <!-- โหลดตัวช่วยสำหรับแปลงเว็บเป็นรูปภาพ -->
+    <!-- โหลดไลบรารีที่จำเป็น -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
-        /* ส่วนนี้คือการตกแต่งความสวยงาม (CSS) */
         body {
-            background-color: #e5e7eb; /* สีเทาอ่อนพื้นหลัง */
+            background-color: #e5e7eb;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 50px;
+            display: flex; flex-direction: column; align-items: center; padding: 50px;
         }
-
-        /* กล่องสถิติ (อิงจากดีไซน์ Canva ของคุณ) */
-        .stat-box {
-            background-color: #1e1e24; /* สีพื้นหลังกล่อง */
-            color: #ffffff;
-            width: 350px;
+        
+        /* จัดกล่องให้อยู่ข้างกัน */
+        .card-container {
+            display: flex;
+            gap: 20px;
+            background-color: #e5e7eb; /* สีพื้นหลังรอบนอกตอนแคปรูป */
             padding: 20px;
-            border-radius: 12px;
         }
 
-        /* หัวข้อ */
+        /* ดีไซน์กล่องสถิติ (สีดำแบบใน Canva) */
+        .stat-box {
+            background-color: #1e1e24; color: #ffffff;
+            width: 350px; padding: 20px; border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        /* สีและเส้นใต้ของหัวข้อ */
+        .header-pink { color: #a855f7; border-bottom: 3px solid #a855f7; }
+        .header-orange { color: #f97316; border-bottom: 3px solid #f97316; }
+
         .header {
-            color: #a855f7; /* สีม่วง */
-            font-size: 18px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            border-bottom: 3px solid #a855f7;
-            padding-bottom: 8px;
-            margin-bottom: 20px;
+            font-size: 18px; font-weight: bold; letter-spacing: 1px;
+            padding-bottom: 8px; margin-bottom: 20px; text-transform: uppercase;
         }
 
-        /* ตารางข้อมูลแต่ละบรรทัด */
-        .row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
+        /* การจัดเรียงตัวเลขแต่ละบรรทัด */
+        .row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
         .platform-name { color: #d1d5db; }
         
-        /* สีลูกศรขึ้นลง */
+        /* สีตัวอักษรลูกศร เขียว/แดง */
         .up { color: #10b981; font-weight: bold; font-size: 12px; }
         .down { color: #ef4444; font-weight: bold; font-size: 12px; }
-
+        
         /* ปุ่มดาวน์โหลด */
         .btn-download {
-            margin-top: 30px;
-            background-color: #a855f7;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
+            margin-top: 30px; background-color: #a855f7; color: white; border: none;
+            padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold;
         }
         .btn-download:hover { background-color: #9333ea; }
+        #loading { color: #333; margin-bottom: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- ส่วนที่จะแคปเจอร์เป็นรูปภาพ -->
-    <div id="capture-area" class="stat-box">
-        <div class="header">SOCIAL FOLLOWERS</div>
+    <div id="loading">กำลังดึงข้อมูลจาก Google Sheets (หน้า Main)...</div>
+
+    <!-- พื้นที่สำหรับแคปรูป จะครอบคลุมทั้ง 2 กล่อง -->
+    <div id="capture-area" class="card-container" style="display: none;">
         
-        <div class="row">
-            <span class="platform-name">Instagram</span>
-            <span>10,227,971 <span class="down">▼ (-87)</span></span>
-        </div>
-        
-        <div class="row">
-            <span class="platform-name">TikTok</span>
-            <span>896,228 <span class="up">▲ (+56)</span></span>
+        <!-- กล่องที่ 1: Social Followers -->
+        <div class="stat-box">
+            <div class="header header-pink">SOCIAL FOLLOWERS</div>
+            <div id="followers-container"></div>
         </div>
 
-        <div class="row">
-            <span class="platform-name">Douyin</span>
-            <span>1,250,234 <span class="up">▲ (+1,574)</span></span>
+        <!-- กล่องที่ 2: Spotify Streams -->
+        <div class="stat-box">
+            <div class="header header-orange">SPOTIFY STREAMS (TOP 10)</div>
+            <div id="spotify-container"></div>
         </div>
+
     </div>
 
-    <!-- ปุ่มกด -->
-    <button class="btn-download" onclick="saveAsImage()">📸 ดาวน์โหลดรูปภาพ</button>
+    <button class="btn-download" onclick="saveAsImage()" style="display: none;" id="btn-save">📸 ดาวน์โหลดรูปภาพ</button>
 
-    <!-- ส่วนที่สั่งให้ปุ่มทำงาน (JavaScript) -->
     <script>
+        // ฟังก์ชันจัดการลูกศรและสี (รองรับทั้งสูตรของเพื่อน และเลขดิบๆ)
+        function formatDiff(diffValue) {
+            if (!diffValue) return '';
+            const strValue = String(diffValue).trim();
+            
+            // ถ้าเจอสัญลักษณ์ลูกศรที่เพื่อนเขียนสูตรไว้ ให้ใส่สีเลย
+            if (strValue.includes('▲')) return `<span class="up">${strValue}</span>`;
+            if (strValue.includes('▼')) return `<span class="down">${strValue}</span>`;
+            
+            // ถ้าเป็นตัวเลขดิบๆ ไม่มีลูกศร ให้โค้ดคำนวณและใส่ลูกศรให้เอง
+            const num = parseInt(strValue.replace(/,/g, ''));
+            if (!isNaN(num) && num !== 0) {
+                if (num > 0) return `<span class="up">▲ (+${num.toLocaleString()})</span>`;
+                if (num < 0) return `<span class="down">▼ (${num.toLocaleString()})</span>`;
+            }
+            return `<span>${strValue}</span>`;
+        }
+
+        // ฟังก์ชันโหลดข้อมูล
+        function loadData() {
+            // *** เอาลิงก์ CSV ของหน้า Main มาวางในเครื่องหมาย ' ' ด้านล่างนี้ ***
+            const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=1826113344&single=true&output=csv';
+
+            Papa.parse(sheetUrl, {
+                download: true,
+                header: false,
+                complete: function(results) {
+                    const data = results.data;
+                    let htmlFollowers = '';
+                    let htmlSpotify = '';
+                    let currentSection = 'other';
+
+                    data.forEach((row, index) => {
+                        // ข้ามบรรทัดแรกที่เป็นหัวตารางวันที่
+                        if (index === 0) return;
+
+                        const colA = row[0] ? String(row[0]).trim() : ''; // ชื่อแพลตฟอร์ม/เพลง
+                        const colB = row[1] ? String(row[1]).trim() : ''; // ยอดรวม
+                        const colC = row[2] ? String(row[2]).trim() : ''; // ผลต่าง
+
+                        if (!colA) return; // ข้ามบรรทัดที่คอลัมน์ A ว่าง
+
+                        // เช็คหัวข้อหมวดหมู่
+                        if (!colB || colB === '') {
+                            if (colA.includes('Followers') || colA.includes('𝗙𝗼𝗹𝗹𝗼𝘄𝗲𝗿𝘀')) {
+                                currentSection = 'followers';
+                            } else if (colA.includes('Spotify') || colA.includes('𝗦𝗽𝗼𝘁𝗶𝗳𝘆')) {
+                                currentSection = 'spotify';
+                            } else {
+                                currentSection = 'other';
+                            }
+                            return; 
+                        }
+
+                        // ถ้ายอดรวมมีข้อมูล และอยู่ในหมวดที่เราต้องการ
+                        if ((currentSection === 'followers' || currentSection === 'spotify') && colB) {
+                            const title = colA;
+                            let total = colB;
+                            
+                            // จัดฟอร์แมตยอดรวมให้มีลูกน้ำสวยๆ
+                            const parsedB = parseInt(colB.replace(/,/g, ''));
+                            if (!isNaN(parsedB)) total = parsedB.toLocaleString();
+                            
+                            // ดึงผลต่างมาใส่สี
+                            const diff = formatDiff(colC);
+
+                            const rowHtml = `
+                                <div class="row">
+                                    <span class="platform-name">${title}</span>
+                                    <span>${total} ${diff}</span>
+                                </div>
+                            `;
+
+                            // แยกใส่กล่องซ้ายขวา
+                            if (currentSection === 'followers') htmlFollowers += rowHtml;
+                            if (currentSection === 'spotify') htmlSpotify += rowHtml;
+                        }
+                    });
+
+                    // นำข้อมูลยัดลงกล่อง
+                    document.getElementById('followers-container').innerHTML = htmlFollowers;
+                    document.getElementById('spotify-container').innerHTML = htmlSpotify;
+                    
+                    // แสดงผล
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('capture-area').style.display = 'flex';
+                    document.getElementById('btn-save').style.display = 'block';
+                }
+            });
+        }
+
+        // ฟังก์ชันเซฟรูปภาพ
         function saveAsImage() {
             const box = document.getElementById('capture-area');
-            html2canvas(box, { scale: 3, backgroundColor: '#1e1e24' }).then(canvas => {
+            html2canvas(box, { scale: 3, backgroundColor: '#e5e7eb' }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'social-followers-stat.png';
+                link.download = 'ten-stat-update.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });
         }
-    </script>
 
+        window.onload = loadData;
+    </script>
 </body>
 </html>
