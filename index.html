@@ -18,7 +18,7 @@
         .card-container {
             display: flex;
             gap: 20px;
-            background-color: #e5e7eb; /* สีพื้นหลังรอบนอกตอนแคปรูป */
+            background-color: #e5e7eb;
             padding: 20px;
         }
 
@@ -109,7 +109,7 @@
                     const data = results.data;
                     let htmlFollowers = '';
                     let htmlSpotify = '';
-                    let currentSection = 'other';
+                    let currentSection = 'other'; // เริ่มต้นให้ข้ามไปก่อน จนกว่าจะเจอหมวดที่ต้องการ
 
                     data.forEach((row, index) => {
                         // ข้ามบรรทัดแรกที่เป็นหัวตารางวันที่
@@ -122,19 +122,21 @@
                         if (!colA) return; // ข้ามบรรทัดที่คอลัมน์ A ว่าง
 
                         // เช็คหัวข้อหมวดหมู่
-                        if (!colB || colB === '') {
+                        // สมมติว่าเมื่อเจอบรรทัดที่มีคำเหล่านี้ (และคอลัมน์ B ว่าง) คือการเริ่มหมวดหมู่ใหม่
+                        if (!colB || colB === '' || colB === 'NaN') {
                             if (colA.includes('Followers') || colA.includes('𝗙𝗼𝗹𝗹𝗼𝘄𝗲𝗿𝘀')) {
                                 currentSection = 'followers';
-                            } else if (colA.includes('Spotify') || colA.includes('𝗦𝗽𝗼𝘁𝗶𝗳𝘆')) {
-                                currentSection = 'spotify';
+                            } else if (colA.includes('Spotify streams') || colA.includes('𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝘀𝘁𝗿𝗲𝗮𝗺𝘀 (𝗧𝗼𝗽 𝟭𝟬)')) {
+                                currentSection = 'spotify_streams';
                             } else {
-                                currentSection = 'other';
+                                // ถ้าเป็นหัวข้ออื่นๆ (เช่น YouTube, Spotify Listeners (Top 5)) ให้หยุดดึงข้อมูลชั่วคราว
+                                currentSection = 'other'; 
                             }
-                            return; 
+                            return; // ข้ามบรรทัดที่เป็นหัวข้อ
                         }
 
-                        // ถ้ายอดรวมมีข้อมูล และอยู่ในหมวดที่เราต้องการ
-                        if ((currentSection === 'followers' || currentSection === 'spotify') && colB) {
+                        // ถ้ายอดรวมมีข้อมูล และอยู่ในหมวด Followers หรือ Spotify Streams
+                        if ((currentSection === 'followers' || currentSection === 'spotify_streams') && colB && colB !== 'NaN') {
                             const title = colA;
                             let total = colB;
                             
@@ -152,9 +154,9 @@
                                 </div>
                             `;
 
-                            // แยกใส่กล่องซ้ายขวา
+                            // แยกใส่กล่องซ้ายขวาตามหมวดหมู่
                             if (currentSection === 'followers') htmlFollowers += rowHtml;
-                            if (currentSection === 'spotify') htmlSpotify += rowHtml;
+                            if (currentSection === 'spotify_streams') htmlSpotify += rowHtml;
                         }
                     });
 
