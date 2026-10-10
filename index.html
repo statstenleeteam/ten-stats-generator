@@ -32,10 +32,10 @@
             background-color: #e5e7eb;
             padding: 40px;
             border-radius: 8px;
-            width: 1350px; 
-            display: none; /* ซ่อนทุกแท็บไว้ก่อน */
+            display: none; 
+            margin: 0 auto;
         }
-        .capture-wrapper.active { display: block; } /* โชว์เฉพาะแท็บที่เปิด */
+        .capture-wrapper.active { display: block; }
 
         /* ดีไซน์หัวกระดาษแบบใหม่ */
         .page-header { text-align: center; margin-bottom: 40px; position: relative; }
@@ -47,7 +47,7 @@
         .grid-container { display: grid; grid-template-columns: 310px 310px 360px 310px; gap: 20px; align-items: start; }
         .col-left, .col-right { display: flex; flex-direction: column; gap: 20px; }
 
-        .stat-box { background-color: #1c1c24; color: #ffffff; padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box; margin-bottom: 20px;}
+        .stat-box { background-color: #1c1c24; color: #ffffff; padding: 25px 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box; margin-bottom: 20px;}
         
         .header { font-size: 15px; font-weight: 700; letter-spacing: 1px; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; line-height: 1.4; }
         .h-purple { color: #a855f7; border-bottom: 2px solid #a855f7; }
@@ -61,10 +61,15 @@
         
         /* สไตล์ตารางสำหรับหน้า Spotify/YTMS/Charts */
         .list-table { width: 100%; border-collapse: collapse; color: #fff; font-size: 14px;}
-        .list-table td { padding: 10px 5px; border-bottom: 1px solid #374151; }
+        .list-table td { padding: 12px 5px; border-bottom: 1px solid #374151; }
         .list-table tr:last-child td { border-bottom: none; }
-        .section-title td { color: #f97316; font-weight: 700; font-size: 15px; padding-top: 25px; border-bottom: 2px solid #f97316;}
-        .total-row td { color: #a855f7; font-weight: 700; font-size: 15px; background-color: #2a2a35; border-top: 2px solid #a855f7; border-bottom: none !important;}
+        
+        .section-title td { color: #f97316; font-weight: 700; font-size: 15px; padding-top: 30px; border-bottom: 2px solid #f97316;}
+        .total-row td { color: #a855f7; font-weight: 700; font-size: 15px; padding-top: 20px; padding-bottom: 20px; border-bottom: 1px solid #4b5563;}
+        
+        .song-name { color: #d1d5db; font-weight: 500; }
+        .song-value { text-align: right; font-weight: 600; }
+        .song-diff { text-align: right; font-size: 13px; font-weight: 600; }
 
         .up { color: #10b981; }
         .down { color: #ef4444; }
@@ -78,7 +83,6 @@
 </head>
 <body>
 
-    <!-- ปุ่มเลือกแท็บ -->
     <div class="tab-container" id="tabs">
         <button class="tab-btn active" onclick="switchTab('tab-overall')">📊 OVERALL</button>
         <button class="tab-btn" onclick="switchTab('tab-spo')">🎧 SPOTIFY</button>
@@ -86,11 +90,11 @@
         <button class="tab-btn" onclick="switchTab('tab-charts')">🏆 CHARTS</button>
     </div>
 
-    <div id="loading">กำลังดึงข้อมูลจากทุกชีท...</div>
+    <div id="loading">กำลังดึงข้อมูล...</div>
     <div id="error-msg"></div>
 
     <!-- แท็บ 1: OVERALL -->
-    <div class="capture-wrapper active" id="tab-overall">
+    <div class="capture-wrapper active" id="tab-overall" style="width: 1350px;">
         <div class="page-header">
             <h1 id="main-title"><span>TEN</span>STATISTIC</h1>
             <p id="sub-title-overall">TEN LEE TEAM</p>
@@ -109,7 +113,7 @@
         </div>
     </div>
 
-    <!-- แท็บ 2: SPOTIFY (แบบยาว) -->
+    <!-- แท็บ 2: SPOTIFY -->
     <div class="capture-wrapper" id="tab-spo" style="width: 800px;">
         <div class="page-header" style="margin-bottom: 20px;">
             <h1><span>SPOTIFY</span>STREAMS</h1>
@@ -123,8 +127,8 @@
     <!-- แท็บ 3: YT MUSIC -->
     <div class="capture-wrapper" id="tab-ytms" style="width: 800px;">
         <div class="page-header" style="margin-bottom: 20px;">
-            <h1><span>YOUTUBE</span>MUSIC</h1>
-            <p id="sub-title-ytms">TEN LEE TEAM</p>
+            <h1 style="text-transform: none;"><span style="color: #ff0000; font-style: normal; padding-right: 0px;">YouTube</span> Music Streams</h1>
+            <p style="text-transform: none; letter-spacing: 2px; font-size: 18px;">(Weekly) : <span id="date-ytms"></span></p>
         </div>
         <div class="stat-box" style="width: 100%;">
             <table class="list-table" id="table-ytms"></table>
@@ -134,22 +138,22 @@
     <!-- แท็บ 4: CHARTS -->
     <div class="capture-wrapper" id="tab-charts" style="width: 1000px;">
         <div class="page-header" style="margin-bottom: 20px;">
-            <h1><span>MUSIC</span>CHARTS</h1>
-            <p id="sub-title-charts">TEN LEE TEAM</p>
+            <h1 style="text-transform: none;"><span style="font-style: normal; color: #9333ea;">TEN'S</span> Music Charts</h1>
+            <p style="text-transform: none; letter-spacing: 2px; font-size: 18px;">: <span id="date-charts"></span></p>
         </div>
         <div class="stat-box" style="width: 100%;">
             <table class="list-table" id="table-charts"></table>
         </div>
     </div>
 
-    <button class="btn-download" onclick="saveAsImage()" style="display: none;" id="btn-save">📸 ดาวน์โหลดรูปภาพ (แท็บที่เลือก)</button>
+    <button class="btn-download" onclick="saveAsImage()" style="display: none;" id="btn-save">📸 ดาวน์โหลดรูปภาพ</button>
 
     <script>
-        // === กรุณาใส่ลิงก์ CSV ของแต่ละชีทตรงนี้ ===
+        // === ลิงก์ CSV ของแต่ละชีท ===
         const CSV_OVERALL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=60150505&single=true&output=csv';
-        const CSV_SPO = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=907365518&single=true&output=csv'; // ลิงก์ชีท spo
-        const CSV_YTMS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=1171176371&single=true&output=csv'; // ลิงก์ชีท For ytms
-        const CSV_CHARTS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=1645940158&single=true&output=csv'; // ลิงก์ชีท For chart
+        const CSV_SPO = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=907365518&single=true&output=csv'; 
+        const CSV_YTMS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=1171176371&single=true&output=csv'; 
+        const CSV_CHARTS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=1645940158&single=true&output=csv'; 
 
         let currentActiveTab = 'tab-overall';
 
@@ -176,14 +180,15 @@
         }
 
         function formatNumber(numStr) {
+            if(!numStr) return '';
             const num = parseFloat(numStr.replace(/,/g, ''));
             if (isNaN(num)) return numStr;
             if (numStr.includes('M') || numStr.includes('K')) return numStr;
             return num.toLocaleString();
         }
 
-        // โหลดหน้า Overall
         function loadOverall() {
+            if(!CSV_OVERALL) return;
             Papa.parse(CSV_OVERALL, {
                 download: true, header: false,
                 complete: function(results) {
@@ -238,9 +243,8 @@
             });
         }
 
-        // ฟังก์ชันสร้างตารางแบบยืดหยุ่น (รองรับ Spotify & YTMS)
         function generateListTable(csvUrl, tableId, titleId, datePrefix) {
-            if(!csvUrl) return; // ข้ามถ้ายังไม่ใส่ลิงก์
+            if(!csvUrl) return;
             Papa.parse(csvUrl, {
                 download: true, header: false,
                 complete: function(results) {
@@ -250,32 +254,33 @@
                         const colB = row[1] ? String(row[1]).trim() : '';
                         const colC = row[2] ? String(row[2]).trim() : '';
                         
-                        // ดึงวันที่
                         if (colA.includes(datePrefix)) {
-                            document.getElementById(titleId).innerText = "TEN LEE TEAM • " + colA.replace(datePrefix, '').replace(':', '').trim();
+                            let dateParts = colA.split(':');
+                            let dateVal = dateParts.length > 1 ? dateParts[1].trim() : colA.replace(datePrefix, '').trim();
+                            
+                            if (titleId === 'date-ytms') {
+                                document.getElementById(titleId).innerText = dateVal;
+                            } else {
+                                document.getElementById(titleId).innerText = "TEN LEE TEAM • " + dateVal;
+                            }
                             return;
                         }
 
-                        if (!colA && !colB) return; // บรรทัดว่าง
+                        if (colA === 'streams' || colB === 'streams' || (!colA && !colB)) return;
 
-                        // ถ้าเป็นหัวข้ออัลบั้ม (ไม่มีตัวเลขยอดวิวใน Col B)
                         if (colA && !colB && !colC) {
                             html += `<tr class="section-title"><td colspan="3">${colA}</td></tr>`;
-                        } 
-                        // ถ้าเป็นยอด Total (ดักคำว่า TOTAL หรือ Album)
-                        else if (colA.toUpperCase().includes('TOTAL') || colA.toUpperCase().includes('ALBUM TEN') || colA.toUpperCase().includes('ALBUM STUNNER') || colA.toUpperCase().includes('ALBUM HUMANITY')) {
+                        } else if (colA.toUpperCase().includes('TOTAL') || colA.toUpperCase().includes('ALBUM')) {
                             html += `<tr class="total-row">
-                                <td style="width: 50%;">${colA}</td>
-                                <td style="width: 25%; text-align: right;">${formatNumber(colB)}</td>
-                                <td style="width: 25%; text-align: right;">${formatDiff(colC)}</td>
+                                <td style="width: 40%; padding-left: 15px;">${colA}</td>
+                                <td style="width: 30%; text-align: right;">${formatNumber(colB)}</td>
+                                <td style="width: 30%; text-align: right;">${formatDiff(colC)}</td>
                             </tr>`;
-                        }
-                        // รายชื่อเพลงปกติ
-                        else if (colB) {
+                        } else if (colA && colB) {
                             html += `<tr>
-                                <td style="width: 50%; color: #d1d5db;">${colA}</td>
-                                <td style="width: 25%; text-align: right; font-weight: 600;">${formatNumber(colB)}</td>
-                                <td style="width: 25%; text-align: right;">${formatDiff(colC)}</td>
+                                <td class="song-name" style="width: 40%; padding-left: 15px;">${colA}</td>
+                                <td class="song-value" style="width: 30%;">${formatNumber(colB)}</td>
+                                <td class="song-diff" style="width: 30%;">${formatDiff(colC)}</td>
                             </tr>`;
                         }
                     });
@@ -284,7 +289,6 @@
             });
         }
 
-        // ฟังก์ชันสร้างตาราง Charts
         function generateChartsTable(csvUrl) {
             if(!csvUrl) return;
             Papa.parse(csvUrl, {
@@ -298,19 +302,24 @@
                         const colD = row[3] ? String(row[3]).trim() : '';
                         const colE = row[4] ? String(row[4]).trim() : '';
 
-                        if (colA.includes("Charts :")) {
-                            document.getElementById('sub-title-charts').innerText = "TEN LEE TEAM • " + colA.replace("TEN'S Music Charts :", '').trim();
+                        if (colA.includes("Charts :") || colA.includes("TEN'S Music Charts")) {
+                            let dateParts = colA.split(':');
+                            let dateVal = dateParts.length > 1 ? dateParts[1].trim() : colA.replace("TEN'S Music Charts", '').trim();
+                            document.getElementById('date-charts').innerText = dateVal;
                             return;
                         }
 
-                        if (colA && !colB && !colC) {
+                        if (!colA && !colB) return;
+                        if (colB === 'Country' || colC === 'Name') return;
+
+                        if (colA && !colB && !colC && !colD) {
                             html += `<tr class="section-title"><td colspan="5">${colA}</td></tr>`;
                         } else if (colA || colB) {
                             html += `<tr>
-                                <td style="width: 20%; color: #d1d5db;">${colA}</td>
-                                <td style="width: 20%; color: #9ca3af;">${colB}</td>
-                                <td style="width: 30%; font-weight: 600;">${colC}</td>
-                                <td style="width: 15%; text-align: right; font-weight: 600;">${colD}</td>
+                                <td style="width: 25%; color: #d1d5db; padding-left: 15px;">${colA}</td>
+                                <td style="width: 15%; color: #9ca3af;">${colB}</td>
+                                <td style="width: 30%; font-weight: 600; text-align: center;">${colC}</td>
+                                <td style="width: 15%; text-align: right; font-weight: 600; font-size: 16px;">${colD}</td>
                                 <td style="width: 15%; text-align: right;">${formatDiff(colE)}</td>
                             </tr>`;
                         }
@@ -323,7 +332,7 @@
         window.onload = function() {
             loadOverall();
             generateListTable(CSV_SPO, 'table-spo', 'sub-title-spo', 'Spotify Streams');
-            generateListTable(CSV_YTMS, 'table-ytms', 'sub-title-ytms', 'YouTube Music Streams');
+            generateListTable(CSV_YTMS, 'table-ytms', 'date-ytms', 'YouTube Music Streams');
             generateChartsTable(CSV_CHARTS);
         };
 
