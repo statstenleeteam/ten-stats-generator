@@ -37,7 +37,7 @@
         }
         .capture-wrapper.active { display: block; }
 
-        /* ดีไซน์หัวกระดาษแบบใหม่ */
+        /* ดีไซน์หัวกระดาษ */
         .page-header { text-align: center; margin-bottom: 40px; position: relative; }
         .page-header h1 { margin: 0; font-size: 52px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: #111827; }
         .page-header h1 span { color: #9333ea; font-style: italic; padding-right: 8px; }
@@ -54,10 +54,11 @@
         .h-red { color: #ef4444; border-bottom: 2px solid #ef4444; }    
         .h-orange { color: #f97316; border-bottom: 2px solid #f97316; } 
 
-        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 13.5px; }
-        .platform-name { flex: 1; color: #d1d5db; line-height: 1.3; font-weight: 500; padding-right: 10px; }
-        .value-col { width: 95px; text-align: right; font-weight: 600; }
-        .diff-col { width: 95px; text-align: right; font-size: 12px; font-weight: 600; }
+        /* แก้ปัญหาชื่อเพลงโดนตัด 3 บรรทัดด้วย Grid 1fr auto auto */
+        .row { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; margin-bottom: 14px; font-size: 13.5px; align-items: center; }
+        .platform-name { color: #d1d5db; line-height: 1.3; font-weight: 500; }
+        .value-col { text-align: right; font-weight: 600; white-space: nowrap; }
+        .diff-col { text-align: right; font-size: 12px; font-weight: 600; white-space: nowrap; min-width: 75px; }
         
         /* สไตล์ตารางสำหรับหน้า Spotify/YTMS/Charts */
         .list-table { width: 100%; border-collapse: collapse; color: #fff; font-size: 14px;}
@@ -243,6 +244,7 @@
             });
         }
 
+        // อ่านข้อมูลจากคอลัมน์ B, C, D (row[1], row[2], row[3]) แทน
         function generateListTable(csvUrl, tableId, titleId, datePrefix) {
             if(!csvUrl) return;
             Papa.parse(csvUrl, {
@@ -250,13 +252,17 @@
                 complete: function(results) {
                     let html = '';
                     results.data.forEach(row => {
-                        const colA = row[0] ? String(row[0]).trim() : '';
-                        const colB = row[1] ? String(row[1]).trim() : '';
-                        const colC = row[2] ? String(row[2]).trim() : '';
+                        // ปรับให้อ่านเริ่มจาก Column B
+                        const colName = row[1] ? String(row[1]).trim() : '';
+                        const colVal = row[2] ? String(row[2]).trim() : '';
+                        const colDiff = row[3] ? String(row[3]).trim() : '';
                         
-                        if (colA.includes(datePrefix)) {
-                            let dateParts = colA.split(':');
-                            let dateVal = dateParts.length > 1 ? dateParts[1].trim() : colA.replace(datePrefix, '').trim();
+                        // เอา row[0] และ row[1] มารวมกันเช็กเผื่อวันที่อยู่คอลัมน์ A หรือ B
+                        const rawTitle = (row[0] || '') + ' ' + colName; 
+
+                        if (rawTitle.includes(datePrefix)) {
+                            let dateParts = rawTitle.split(':');
+                            let dateVal = dateParts.length > 1 ? dateParts[1].trim() : rawTitle.replace(datePrefix, '').trim();
                             
                             if (titleId === 'date-ytms') {
                                 document.getElementById(titleId).innerText = dateVal;
@@ -266,21 +272,21 @@
                             return;
                         }
 
-                        if (colA === 'streams' || colB === 'streams' || (!colA && !colB)) return;
+                        if (colName === 'streams' || colVal === 'streams' || (!colName && !colVal)) return;
 
-                        if (colA && !colB && !colC) {
-                            html += `<tr class="section-title"><td colspan="3">${colA}</td></tr>`;
-                        } else if (colA.toUpperCase().includes('TOTAL') || colA.toUpperCase().includes('ALBUM')) {
+                        if (colName && !colVal && !colDiff) {
+                            html += `<tr class="section-title"><td colspan="3">${colName}</td></tr>`;
+                        } else if (colName.toUpperCase().includes('TOTAL') || colName.toUpperCase().includes('ALBUM')) {
                             html += `<tr class="total-row">
-                                <td style="width: 40%; padding-left: 15px;">${colA}</td>
-                                <td style="width: 30%; text-align: right;">${formatNumber(colB)}</td>
-                                <td style="width: 30%; text-align: right;">${formatDiff(colC)}</td>
+                                <td style="width: 40%; padding-left: 15px;">${colName}</td>
+                                <td style="width: 30%; text-align: right;">${formatNumber(colVal)}</td>
+                                <td style="width: 30%; text-align: right;">${formatDiff(colDiff)}</td>
                             </tr>`;
-                        } else if (colA && colB) {
+                        } else if (colName && colVal) {
                             html += `<tr>
-                                <td class="song-name" style="width: 40%; padding-left: 15px;">${colA}</td>
-                                <td class="song-value" style="width: 30%;">${formatNumber(colB)}</td>
-                                <td class="song-diff" style="width: 30%;">${formatDiff(colC)}</td>
+                                <td class="song-name" style="width: 40%; padding-left: 15px;">${colName}</td>
+                                <td class="song-value" style="width: 30%;">${formatNumber(colVal)}</td>
+                                <td class="song-diff" style="width: 30%;">${formatDiff(colDiff)}</td>
                             </tr>`;
                         }
                     });
@@ -289,6 +295,7 @@
             });
         }
 
+        // อ่านข้อมูลจากคอลัมน์ B, C, D, E, F (row[1] ถึง row[5]) แทน
         function generateChartsTable(csvUrl) {
             if(!csvUrl) return;
             Papa.parse(csvUrl, {
@@ -296,15 +303,18 @@
                 complete: function(results) {
                     let html = '';
                     results.data.forEach(row => {
-                        const colA = row[0] ? String(row[0]).trim() : '';
-                        const colB = row[1] ? String(row[1]).trim() : '';
-                        const colC = row[2] ? String(row[2]).trim() : '';
-                        const colD = row[3] ? String(row[3]).trim() : '';
-                        const colE = row[4] ? String(row[4]).trim() : '';
+                        // ปรับให้อ่านเริ่มจาก Column B เป็นต้นไป
+                        const colA = row[1] ? String(row[1]).trim() : '';
+                        const colB = row[2] ? String(row[2]).trim() : '';
+                        const colC = row[3] ? String(row[3]).trim() : '';
+                        const colD = row[4] ? String(row[4]).trim() : '';
+                        const colE = row[5] ? String(row[5]).trim() : '';
 
-                        if (colA.includes("Charts :") || colA.includes("TEN'S Music Charts")) {
-                            let dateParts = colA.split(':');
-                            let dateVal = dateParts.length > 1 ? dateParts[1].trim() : colA.replace("TEN'S Music Charts", '').trim();
+                        const rawTitle = (row[0] || '') + ' ' + colA + ' ' + colB;
+
+                        if (rawTitle.includes("Charts :") || rawTitle.includes("TEN'S Music Charts")) {
+                            let dateParts = rawTitle.split(':');
+                            let dateVal = dateParts.length > 1 ? dateParts[1].trim() : rawTitle.replace("TEN'S Music Charts", '').trim();
                             document.getElementById('date-charts').innerText = dateVal;
                             return;
                         }
@@ -320,39 +330,4 @@
                                 <td style="width: 15%; color: #9ca3af;">${colB}</td>
                                 <td style="width: 30%; font-weight: 600; text-align: center;">${colC}</td>
                                 <td style="width: 15%; text-align: right; font-weight: 600; font-size: 16px;">${colD}</td>
-                                <td style="width: 15%; text-align: right;">${formatDiff(colE)}</td>
-                            </tr>`;
-                        }
-                    });
-                    document.getElementById('table-charts').innerHTML = html;
-                }
-            });
-        }
-
-        window.onload = function() {
-            loadOverall();
-            generateListTable(CSV_SPO, 'table-spo', 'sub-title-spo', 'Spotify Streams');
-            generateListTable(CSV_YTMS, 'table-ytms', 'date-ytms', 'YouTube Music Streams');
-            generateChartsTable(CSV_CHARTS);
-        };
-
-        function saveAsImage() {
-            window.scrollTo(0, 0);
-            const box = document.getElementById(currentActiveTab);
-            const btn = document.getElementById('btn-save');
-            const oldText = btn.innerText;
-            btn.innerText = '⏳ กำลังประมวลผล...';
-
-            html2canvas(box, { 
-                scale: 2, backgroundColor: '#e5e7eb', useCORS: true 
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = currentActiveTab + '.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                btn.innerText = oldText;
-            });
-        }
-    </script>
-</body>
-</html>
+                                <td style="width: 15%; text-align: right;">${
