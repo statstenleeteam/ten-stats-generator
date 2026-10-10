@@ -8,7 +8,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,700;0,800;1,800&family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -24,23 +24,30 @@
             width: 1350px; 
         }
 
-        .page-header { text-align: center; margin-bottom: 40px; }
-        
-        /* --- เวทมนตร์อยู่ตรงนี้ --- */
-        .page-header img {
-            width: 450px; /* ขยายความกว้างให้ใหญ่สะใจ! (ปรับตัวเลขเพิ่ม/ลดได้) */
-            height: auto; 
-            margin: 0 auto 15px auto; 
-            display: block;
-            mix-blend-mode: multiply; /* โค้ดลับลบพื้นหลังสีขาวให้กลายเป็นใส */
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
+        /* ดีไซน์หัวกระดาษแบบใหม่ (ใช้ CSS ล้วน) */
+        .page-header { 
+            text-align: center; 
+            margin-bottom: 40px; 
+            position: relative;
         }
-        
+        .page-header h1 {
+            margin: 0; font-size: 52px; text-transform: uppercase;
+            letter-spacing: 2px; font-weight: 800; color: #111827;
+        }
+        .page-header h1 span {
+            color: #9333ea; /* สีม่วงแบบในโลโก้ */
+            font-style: italic;
+            padding-right: 8px;
+        }
         .page-header p { 
-            margin: 8px 0 0 0; font-size: 16px; color: #6b7280; 
-            font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+            margin: 12px 0 0 0; font-size: 16px; color: #4b5563; 
+            font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+        }
+        /* เส้นตกแต่งใต้ชื่อทีม */
+        .page-header::after {
+            content: ''; display: block; width: 100px; height: 4px;
+            background: linear-gradient(90deg, #a855f7, #f97316);
+            margin: 20px auto 0; border-radius: 2px;
         }
 
         .grid-container {
@@ -93,11 +100,12 @@
         .equal { color: #c084fc; } 
 
         .btn-download { 
-            margin-top: 20px; background-color: #a855f7; color: white; border: none; 
+            margin-top: 30px; background-color: #a855f7; color: white; border: none; 
             padding: 14px 28px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; 
             box-shadow: 0 4px 6px rgba(168, 85, 247, 0.3);
+            transition: 0.2s;
         }
-        .btn-download:hover { background-color: #9333ea; }
+        .btn-download:hover { background-color: #9333ea; transform: translateY(-2px); }
         #loading { font-weight: bold; margin-bottom: 20px; font-size: 18px; color: #333; }
         #error-msg { display: none; color: red; font-weight: bold; }
     </style>
@@ -108,8 +116,10 @@
     <div id="error-msg"></div>
 
     <div class="capture-wrapper" id="capture-area" style="display: none;">
+        
+        <!-- ใช้ตัวหนังสือสร้างดีไซน์แทนรูปภาพ -->
         <div class="page-header">
-            <img src="statslogo.png" alt="TEN STATISTIC">
+            <h1 id="main-title"><span>TEN</span>STATISTIC</h1>
             <p id="sub-title">TEN LEE TEAM</p>
         </div>
 
