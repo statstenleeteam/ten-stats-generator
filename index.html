@@ -8,7 +8,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,700;0,800;1,800&family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,800&family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -17,94 +17,60 @@
             display: flex; flex-direction: column; align-items: center; padding: 20px;
         }
 
+        /* --- ระบบปุ่ม Tabs --- */
+        .tab-container {
+            display: flex; gap: 15px; margin-bottom: 20px;
+        }
+        .tab-btn {
+            background-color: #d1d5db; color: #374151; border: none; padding: 12px 24px;
+            border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+        .tab-btn:hover { background-color: #9ca3af; }
+        .tab-btn.active { background-color: #a855f7; color: white; box-shadow: 0 4px 10px rgba(168, 85, 247, 0.4); }
+
         .capture-wrapper {
             background-color: #e5e7eb;
             padding: 40px;
             border-radius: 8px;
             width: 1350px; 
+            display: none; /* ซ่อนทุกแท็บไว้ก่อน */
         }
+        .capture-wrapper.active { display: block; } /* โชว์เฉพาะแท็บที่เปิด */
 
-        /* ดีไซน์หัวกระดาษแบบใหม่ (ใช้ CSS ล้วน) */
-        .page-header { 
-            text-align: center; 
-            margin-bottom: 40px; 
-            position: relative;
-        }
-        .page-header h1 {
-            margin: 0; font-size: 52px; text-transform: uppercase;
-            letter-spacing: 2px; font-weight: 800; color: #111827;
-        }
-        .page-header h1 span {
-            color: #9333ea; /* สีม่วงแบบในโลโก้ */
-            font-style: italic;
-            padding-right: 8px;
-        }
-        .page-header p { 
-            margin: 12px 0 0 0; font-size: 16px; color: #4b5563; 
-            font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-        }
-        /* เส้นตกแต่งใต้ชื่อทีม */
-        .page-header::after {
-            content: ''; display: block; width: 100px; height: 4px;
-            background: linear-gradient(90deg, #a855f7, #f97316);
-            margin: 20px auto 0; border-radius: 2px;
-        }
+        /* ดีไซน์หัวกระดาษแบบใหม่ */
+        .page-header { text-align: center; margin-bottom: 40px; position: relative; }
+        .page-header h1 { margin: 0; font-size: 52px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: #111827; }
+        .page-header h1 span { color: #9333ea; font-style: italic; padding-right: 8px; }
+        .page-header p { margin: 12px 0 0 0; font-size: 16px; color: #4b5563; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
+        .page-header::after { content: ''; display: block; width: 100px; height: 4px; background: linear-gradient(90deg, #a855f7, #f97316); margin: 20px auto 0; border-radius: 2px; }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: 310px 310px 360px 310px;
-            gap: 20px;
-            align-items: start;
-        }
-
+        .grid-container { display: grid; grid-template-columns: 310px 310px 360px 310px; gap: 20px; align-items: start; }
         .col-left, .col-right { display: flex; flex-direction: column; gap: 20px; }
 
-        .stat-box {
-            background-color: #1c1c24; 
-            color: #ffffff;
-            padding: 25px 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            box-sizing: border-box;
-        }
+        .stat-box { background-color: #1c1c24; color: #ffffff; padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box; margin-bottom: 20px;}
         
-        .header { 
-            font-size: 15px; font-weight: 700; letter-spacing: 1px; 
-            padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase;
-            line-height: 1.4;
-        }
+        .header { font-size: 15px; font-weight: 700; letter-spacing: 1px; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; line-height: 1.4; }
         .h-purple { color: #a855f7; border-bottom: 2px solid #a855f7; }
         .h-red { color: #ef4444; border-bottom: 2px solid #ef4444; }    
         .h-orange { color: #f97316; border-bottom: 2px solid #f97316; } 
 
-        .row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            margin-bottom: 14px; 
-            font-size: 13.5px; 
-        }
-        
-        .platform-name { 
-            flex: 1; 
-            color: #d1d5db; 
-            line-height: 1.3; 
-            font-weight: 500;
-            padding-right: 10px;
-        }
-        .value-col { width: 85px; text-align: right; font-weight: 600; }
+        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 13.5px; }
+        .platform-name { flex: 1; color: #d1d5db; line-height: 1.3; font-weight: 500; padding-right: 10px; }
+        .value-col { width: 95px; text-align: right; font-weight: 600; }
         .diff-col { width: 95px; text-align: right; font-size: 12px; font-weight: 600; }
         
+        /* สไตล์ตารางสำหรับหน้า Spotify/YTMS/Charts */
+        .list-table { width: 100%; border-collapse: collapse; color: #fff; font-size: 14px;}
+        .list-table td { padding: 10px 5px; border-bottom: 1px solid #374151; }
+        .list-table tr:last-child td { border-bottom: none; }
+        .section-title td { color: #f97316; font-weight: 700; font-size: 15px; padding-top: 25px; border-bottom: 2px solid #f97316;}
+        .total-row td { color: #a855f7; font-weight: 700; font-size: 15px; background-color: #2a2a35; border-top: 2px solid #a855f7; border-bottom: none !important;}
+
         .up { color: #10b981; }
         .down { color: #ef4444; }
         .equal { color: #c084fc; } 
 
-        .btn-download { 
-            margin-top: 30px; background-color: #a855f7; color: white; border: none; 
-            padding: 14px 28px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; 
-            box-shadow: 0 4px 6px rgba(168, 85, 247, 0.3);
-            transition: 0.2s;
-        }
+        .btn-download { margin-top: 30px; background-color: #a855f7; color: white; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(168, 85, 247, 0.3); transition: 0.2s; }
         .btn-download:hover { background-color: #9333ea; transform: translateY(-2px); }
         #loading { font-weight: bold; margin-bottom: 20px; font-size: 18px; color: #333; }
         #error-msg { display: none; color: red; font-weight: bold; }
@@ -112,55 +78,89 @@
 </head>
 <body>
 
-    <div id="loading">กำลังดึงข้อมูล...</div>
+    <!-- ปุ่มเลือกแท็บ -->
+    <div class="tab-container" id="tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-overall')">📊 OVERALL</button>
+        <button class="tab-btn" onclick="switchTab('tab-spo')">🎧 SPOTIFY</button>
+        <button class="tab-btn" onclick="switchTab('tab-ytms')">🎵 YT MUSIC</button>
+        <button class="tab-btn" onclick="switchTab('tab-charts')">🏆 CHARTS</button>
+    </div>
+
+    <div id="loading">กำลังดึงข้อมูลจากทุกชีท...</div>
     <div id="error-msg"></div>
 
-    <div class="capture-wrapper" id="capture-area" style="display: none;">
-        
-        <!-- ใช้ตัวหนังสือสร้างดีไซน์แทนรูปภาพ -->
+    <!-- แท็บ 1: OVERALL -->
+    <div class="capture-wrapper active" id="tab-overall">
         <div class="page-header">
             <h1 id="main-title"><span>TEN</span>STATISTIC</h1>
-            <p id="sub-title">TEN LEE TEAM</p>
+            <p id="sub-title-overall">TEN LEE TEAM</p>
         </div>
-
         <div class="grid-container">
             <div class="col-left">
-                <div class="stat-box">
-                    <div class="header h-purple">SOCIAL FOLLOWERS</div>
-                    <div id="box-social"></div>
-                </div>
-                <div class="stat-box">
-                    <div class="header h-red">YOUTUBE BASE</div>
-                    <div id="box-yt-base"></div>
-                </div>
+                <div class="stat-box"><div class="header h-purple">SOCIAL FOLLOWERS</div><div id="box-social"></div></div>
+                <div class="stat-box"><div class="header h-red">YOUTUBE BASE</div><div id="box-yt-base"></div></div>
             </div>
-
-            <div class="stat-box">
-                <div class="header h-red">YOUTUBE VIEWS</div>
-                <div id="box-yt-views"></div>
-            </div>
-
-            <div class="stat-box" style="width: 100%;">
-                <div class="header h-orange">SPOTIFY STREAMS <br>(TOP 10)</div>
-                <div id="box-spotify-streams"></div>
-            </div>
-
+            <div class="stat-box"><div class="header h-red">YOUTUBE VIEWS</div><div id="box-yt-views"></div></div>
+            <div class="stat-box" style="width: 100%;"><div class="header h-orange">SPOTIFY STREAMS <br>(TOP 10)</div><div id="box-spotify-streams"></div></div>
             <div class="col-right">
-                <div class="stat-box">
-                    <div class="header h-orange">SPOTIFY LISTENERS <br>(TOP 5)</div>
-                    <div id="box-spotify-list"></div>
-                </div>
-                <div class="stat-box">
-                    <div class="header h-orange">SPOTIFY BASE</div>
-                    <div id="box-spotify-base"></div>
-                </div>
+                <div class="stat-box"><div class="header h-orange">SPOTIFY LISTENERS <br>(TOP 5)</div><div id="box-spotify-list"></div></div>
+                <div class="stat-box"><div class="header h-orange">SPOTIFY BASE</div><div id="box-spotify-base"></div></div>
             </div>
         </div>
     </div>
 
-    <button class="btn-download" onclick="saveAsImage()" style="display: none;" id="btn-save">📸 ดาวน์โหลดรูปภาพ</button>
+    <!-- แท็บ 2: SPOTIFY (แบบยาว) -->
+    <div class="capture-wrapper" id="tab-spo" style="width: 800px;">
+        <div class="page-header" style="margin-bottom: 20px;">
+            <h1><span>SPOTIFY</span>STREAMS</h1>
+            <p id="sub-title-spo">TEN LEE TEAM</p>
+        </div>
+        <div class="stat-box" style="width: 100%;">
+            <table class="list-table" id="table-spo"></table>
+        </div>
+    </div>
+
+    <!-- แท็บ 3: YT MUSIC -->
+    <div class="capture-wrapper" id="tab-ytms" style="width: 800px;">
+        <div class="page-header" style="margin-bottom: 20px;">
+            <h1><span>YOUTUBE</span>MUSIC</h1>
+            <p id="sub-title-ytms">TEN LEE TEAM</p>
+        </div>
+        <div class="stat-box" style="width: 100%;">
+            <table class="list-table" id="table-ytms"></table>
+        </div>
+    </div>
+
+    <!-- แท็บ 4: CHARTS -->
+    <div class="capture-wrapper" id="tab-charts" style="width: 1000px;">
+        <div class="page-header" style="margin-bottom: 20px;">
+            <h1><span>MUSIC</span>CHARTS</h1>
+            <p id="sub-title-charts">TEN LEE TEAM</p>
+        </div>
+        <div class="stat-box" style="width: 100%;">
+            <table class="list-table" id="table-charts"></table>
+        </div>
+    </div>
+
+    <button class="btn-download" onclick="saveAsImage()" style="display: none;" id="btn-save">📸 ดาวน์โหลดรูปภาพ (แท็บที่เลือก)</button>
 
     <script>
+        // === กรุณาใส่ลิงก์ CSV ของแต่ละชีทตรงนี้ ===
+        const CSV_OVERALL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=60150505&single=true&output=csv';
+        const CSV_SPO = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=907365518&single=true&output=csv'; // ลิงก์ชีท spo
+        const CSV_YTMS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=1171176371&single=true&output=csv'; // ลิงก์ชีท For ytms
+        const CSV_CHARTS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=1645940158&single=true&output=csv'; // ลิงก์ชีท For chart
+
+        let currentActiveTab = 'tab-overall';
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.capture-wrapper').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+            currentActiveTab = tabId;
+        }
+
         function formatDiff(diffValue) {
             if (!diffValue) return '';
             let strValue = String(diffValue).trim();
@@ -169,11 +169,9 @@
             strValue = strValue.replace(/([+-]\s?)(\d{4,})/g, function(match, p1, p2) {
                 return p1 + parseInt(p2).toLocaleString();
             });
-            
             if (strValue.includes('=')) return `<span class="equal">${strValue}</span>`;
             if (strValue.includes('▲')) return `<span class="up">${strValue}</span>`;
             if (strValue.includes('▼')) return `<span class="down">${strValue}</span>`;
-            
             return `<span>${strValue}</span>`;
         }
 
@@ -184,26 +182,10 @@
             return num.toLocaleString();
         }
 
-        function createRow(name, val, diff) {
-            let cleanDiff = formatDiff(diff);
-            if(cleanDiff.includes('for 7 days')) {
-                 cleanDiff = cleanDiff.replace('for 7 days', '<br>for 7 days');
-            }
-            return `
-                <div class="row">
-                    <span class="platform-name">${name}</span>
-                    <span class="value-col">${formatNumber(val)}</span>
-                    <span class="diff-col">${cleanDiff}</span>
-                </div>
-            `;
-        }
-
-        function loadData() {
-            const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=60150505&single=true&output=csv';
-
-            Papa.parse(sheetUrl, {
-                download: true,
-                header: false,
+        // โหลดหน้า Overall
+        function loadOverall() {
+            Papa.parse(CSV_OVERALL, {
+                download: true, header: false,
                 complete: function(results) {
                     try {
                         const data = results.data;
@@ -211,30 +193,28 @@
                         let htmlSpoStreams = '', htmlSpoList = '', htmlSpoBase = '';
                         let currentCategory = '';
 
-                        data.forEach((row, index) => {
-                            const colA = row[0] ? String(row[0]).trim() : ''; 
+                        data.forEach(row => {
                             const colB = row[1] ? String(row[1]).trim() : ''; 
                             const colC = row[2] ? String(row[2]).trim() : ''; 
                             const colD = row[3] ? String(row[3]).trim() : ''; 
 
                             if (colB.includes('TEN STATISTIC')) {
-                                const dateStr = colB.replace('TEN STATISTIC :', '').trim();
-                                document.getElementById('sub-title').innerText = "TEN LEE TEAM • " + dateStr;
+                                document.getElementById('sub-title-overall').innerText = "TEN LEE TEAM • " + colB.replace('TEN STATISTIC :', '').trim();
                                 return;
                             }
-
                             if (!colB) return;
-
                             if (colB === '𝗙𝗼𝗹𝗹𝗼𝘄𝗲𝗿𝘀') { currentCategory = 'social'; return; }
                             if (colB === 'YouTube (@tenoffcl):' || colB === 'YouTube (@tenoffcl)') { currentCategory = 'yt_base'; return; }
                             if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆') { currentCategory = 'spo_base'; return; }
                             if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝗹𝗶𝘀𝘁𝗲𝗻𝗲𝗿𝘀 (𝗧𝗼𝗽 𝟱)') { currentCategory = 'spo_list'; return; }
                             if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝘀𝘁𝗿𝗲𝗮𝗺𝘀 (𝗧𝗼𝗽 𝟭𝟬)') { currentCategory = 'spo_streams'; return; }
                             if (colB === 'Youtube views' || colB === '𝗬𝗼𝘂𝘁𝘂𝗯𝗲 𝗩𝗶𝗲𝘄𝘀') { currentCategory = 'yt_views'; return; }
+                            if (!colC) return;
 
-                            if (!colC || colC === '') return;
-
-                            const rowHtml = createRow(colB, colC, colD);
+                            let cleanDiff = formatDiff(colD);
+                            if(cleanDiff.includes('for 7 days')) cleanDiff = cleanDiff.replace('for 7 days', '<br>for 7 days');
+                            
+                            const rowHtml = `<div class="row"><span class="platform-name">${colB}</span><span class="value-col">${formatNumber(colC)}</span><span class="diff-col">${cleanDiff}</span></div>`;
 
                             if (currentCategory === 'social') htmlSocial += rowHtml;
                             if (currentCategory === 'yt_base') htmlYtBase += rowHtml;
@@ -252,34 +232,118 @@
                         document.getElementById('box-yt-views').innerHTML = htmlYtViews;
                         
                         document.getElementById('loading').style.display = 'none';
-                        document.getElementById('capture-area').style.display = 'block';
                         document.getElementById('btn-save').style.display = 'block';
-                    } catch (e) {
-                        console.error(e);
-                        document.getElementById('error-msg').innerText = "พบปัญหา: " + e.message;
-                        document.getElementById('error-msg').style.display = 'block';
-                    }
+                    } catch (e) { console.error(e); }
                 }
             });
         }
 
-        function saveAsImage() {
-            window.scrollTo(0, 0);
-            const box = document.getElementById('capture-area');
-            html2canvas(box, { 
-                scale: 2, 
-                backgroundColor: '#e5e7eb',
-                useCORS: true,
-                allowTaint: true
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'ten-statistic.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+        // ฟังก์ชันสร้างตารางแบบยืดหยุ่น (รองรับ Spotify & YTMS)
+        function generateListTable(csvUrl, tableId, titleId, datePrefix) {
+            if(!csvUrl) return; // ข้ามถ้ายังไม่ใส่ลิงก์
+            Papa.parse(csvUrl, {
+                download: true, header: false,
+                complete: function(results) {
+                    let html = '';
+                    results.data.forEach(row => {
+                        const colA = row[0] ? String(row[0]).trim() : '';
+                        const colB = row[1] ? String(row[1]).trim() : '';
+                        const colC = row[2] ? String(row[2]).trim() : '';
+                        
+                        // ดึงวันที่
+                        if (colA.includes(datePrefix)) {
+                            document.getElementById(titleId).innerText = "TEN LEE TEAM • " + colA.replace(datePrefix, '').replace(':', '').trim();
+                            return;
+                        }
+
+                        if (!colA && !colB) return; // บรรทัดว่าง
+
+                        // ถ้าเป็นหัวข้ออัลบั้ม (ไม่มีตัวเลขยอดวิวใน Col B)
+                        if (colA && !colB && !colC) {
+                            html += `<tr class="section-title"><td colspan="3">${colA}</td></tr>`;
+                        } 
+                        // ถ้าเป็นยอด Total (ดักคำว่า TOTAL หรือ Album)
+                        else if (colA.toUpperCase().includes('TOTAL') || colA.toUpperCase().includes('ALBUM TEN') || colA.toUpperCase().includes('ALBUM STUNNER') || colA.toUpperCase().includes('ALBUM HUMANITY')) {
+                            html += `<tr class="total-row">
+                                <td style="width: 50%;">${colA}</td>
+                                <td style="width: 25%; text-align: right;">${formatNumber(colB)}</td>
+                                <td style="width: 25%; text-align: right;">${formatDiff(colC)}</td>
+                            </tr>`;
+                        }
+                        // รายชื่อเพลงปกติ
+                        else if (colB) {
+                            html += `<tr>
+                                <td style="width: 50%; color: #d1d5db;">${colA}</td>
+                                <td style="width: 25%; text-align: right; font-weight: 600;">${formatNumber(colB)}</td>
+                                <td style="width: 25%; text-align: right;">${formatDiff(colC)}</td>
+                            </tr>`;
+                        }
+                    });
+                    document.getElementById(tableId).innerHTML = html;
+                }
             });
         }
 
-        window.onload = loadData;
+        // ฟังก์ชันสร้างตาราง Charts
+        function generateChartsTable(csvUrl) {
+            if(!csvUrl) return;
+            Papa.parse(csvUrl, {
+                download: true, header: false,
+                complete: function(results) {
+                    let html = '';
+                    results.data.forEach(row => {
+                        const colA = row[0] ? String(row[0]).trim() : '';
+                        const colB = row[1] ? String(row[1]).trim() : '';
+                        const colC = row[2] ? String(row[2]).trim() : '';
+                        const colD = row[3] ? String(row[3]).trim() : '';
+                        const colE = row[4] ? String(row[4]).trim() : '';
+
+                        if (colA.includes("Charts :")) {
+                            document.getElementById('sub-title-charts').innerText = "TEN LEE TEAM • " + colA.replace("TEN'S Music Charts :", '').trim();
+                            return;
+                        }
+
+                        if (colA && !colB && !colC) {
+                            html += `<tr class="section-title"><td colspan="5">${colA}</td></tr>`;
+                        } else if (colA || colB) {
+                            html += `<tr>
+                                <td style="width: 20%; color: #d1d5db;">${colA}</td>
+                                <td style="width: 20%; color: #9ca3af;">${colB}</td>
+                                <td style="width: 30%; font-weight: 600;">${colC}</td>
+                                <td style="width: 15%; text-align: right; font-weight: 600;">${colD}</td>
+                                <td style="width: 15%; text-align: right;">${formatDiff(colE)}</td>
+                            </tr>`;
+                        }
+                    });
+                    document.getElementById('table-charts').innerHTML = html;
+                }
+            });
+        }
+
+        window.onload = function() {
+            loadOverall();
+            generateListTable(CSV_SPO, 'table-spo', 'sub-title-spo', 'Spotify Streams');
+            generateListTable(CSV_YTMS, 'table-ytms', 'sub-title-ytms', 'YouTube Music Streams');
+            generateChartsTable(CSV_CHARTS);
+        };
+
+        function saveAsImage() {
+            window.scrollTo(0, 0);
+            const box = document.getElementById(currentActiveTab);
+            const btn = document.getElementById('btn-save');
+            const oldText = btn.innerText;
+            btn.innerText = '⏳ กำลังประมวลผล...';
+
+            html2canvas(box, { 
+                scale: 2, backgroundColor: '#e5e7eb', useCORS: true 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = currentActiveTab + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                btn.innerText = oldText;
+            });
+        }
     </script>
 </body>
 </html>
