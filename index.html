@@ -70,14 +70,15 @@
         .down { color: #ef4444; font-weight: bold; }
 
         .btn-download { margin-top: 20px; background-color: #a855f7; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        #loading { font-weight: bold; margin-bottom: 20px; }
-        #error-msg { color: red; font-weight: bold; margin-bottom: 20px; display: none; }
+        .btn-download:hover { background-color: #9333ea; }
+        #loading { font-weight: bold; margin-bottom: 20px; font-size: 18px; color: #333; }
+        #error-msg { display: none; color: red; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="loading">กำลังดึงข้อมูลจากชีท For post... (อาจใช้เวลา 2-3 วินาที)</div>
-    <div id="error-msg">เกิดข้อผิดพลาดในการดึงข้อมูล โปรดรีเฟรชหน้าเว็บ หรือตรวจสอบลิงก์ Google Sheets</div>
+    <div id="loading">กำลังดึงข้อมูล... กรุณารอสักครู่</div>
+    <div id="error-msg"></div>
 
     <div class="capture-wrapper" id="capture-area" style="display: none;">
         <div class="page-header">
@@ -136,8 +137,10 @@
         }
 
         function formatNumber(numStr) {
-            const num = parseInt(numStr.replace(/,/g, ''));
-            return isNaN(num) ? numStr : num.toLocaleString();
+            const num = parseFloat(numStr.replace(/,/g, ''));
+            if (isNaN(num)) return numStr;
+            if (numStr.includes('M') || numStr.includes('K')) return numStr;
+            return num.toLocaleString();
         }
 
         function createRow(name, val, diff) {
@@ -151,64 +154,83 @@
         }
 
         function loadData() {
-            // ลิงก์ของคุณ + ระบบ Proxy ฟรีเพื่อแก้ปัญหา CORS
-            const targetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=60150505&single=true&output=csv';
-            const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl);
+            // ลิงก์ตรงที่ถูกต้องของคุณ
+            const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=60150505&single=true&output=csv';
 
-            Papa.parse(proxyUrl, {
+            Papa.parse(sheetUrl, {
                 download: true,
                 header: false,
                 complete: function(results) {
-                    const data = results.data;
-                    
-                    let htmlSocial = '';
-                    let htmlYtBase = '';
-                    let htmlYtViews = '';
-                    let htmlSpoStreams = '';
-                    let htmlSpoList = '';
-                    let htmlSpoBase = '';
+                    try {
+                        const data = results.data;
+                        
+                        let htmlSocial = '';
+                        let htmlYtBase = '';
+                        let htmlYtViews = '';
+                        let htmlSpoStreams = '';
+                        let htmlSpoList = '';
+                        let htmlSpoBase = '';
 
-                    let currentCategory = '';
+                        let currentCategory = '';
 
-                    data.forEach((row, index) => {
-                        // ดึงวันที่จากบรรทัดที่ 1 (อิงจากชีท For post)
-                        if (index === 0 && row[1]) {
-                            document.getElementById('sub-title').innerText = "TEN LEE TEAM • " + row[1].replace('TEN STATISTIC :', '').trim();
-                            return;
-                        }
+                        data.forEach((row, index) => {
+                            if (index === 0 && row[1]) {
+                                document.getElementById('sub-title').innerText = "TEN LEE TEAM • " + row[1].replace('TEN STATISTIC :', '').trim();
+                                return;
+                            }
 
-                        // ข้อมูลชีท For post เริ่มที่คอลัมน์ B (index 1)
-                        const colName = row[1] ? String(row[1]).trim() : ''; 
-                        const colVal = row[2] ? String(row[2]).trim() : ''; 
-                        const colDiff = row[3] ? String(row[3]).trim() : ''; 
+                            const colName = row[1] ? String(row[1]).trim() : ''; 
+                            const colVal = row[2] ? String(row[2]).trim() : ''; 
+                            const colDiff = row[3] ? String(row[3]).trim() : ''; 
 
-                        if (!colName) return;
+                            if (!colName) return;
 
-                        // ตรวจจับชื่อหมวดหมู่
-                        if (colName === '𝗙𝗼𝗹𝗹𝗼𝘄𝗲𝗿𝘀') { currentCategory = 'social'; return; }
-                        if (colName === 'YouTube (@tenoffcl):') { currentCategory = 'yt_base'; return; }
-                        if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆') { currentCategory = 'spo_base'; return; }
-                        if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝗹𝗶𝘀𝘁𝗲𝗻𝗲𝗿𝘀 (𝗧𝗼𝗽 𝟱)') { currentCategory = 'spo_list'; return; }
-                        if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝘀𝘁𝗿𝗲𝗮𝗺𝘀 (𝗧𝗼𝗽 𝟭𝟬)') { currentCategory = 'spo_streams'; return; }
-                        if (colName === 'Youtube views' || colName === '𝗬𝗼𝘂𝘁𝘂𝗯𝗲 𝗩𝗶𝗲𝘄𝘀') { currentCategory = 'yt_views'; return; }
+                            if (colName === '𝗙𝗼𝗹𝗹𝗼𝘄𝗲𝗿𝘀') { currentCategory = 'social'; return; }
+                            if (colName === 'YouTube (@tenoffcl):') { currentCategory = 'yt_base'; return; }
+                            if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆') { currentCategory = 'spo_base'; return; }
+                            if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝗹𝗶𝘀𝘁𝗲𝗻𝗲𝗿𝘀 (𝗧𝗼𝗽 𝟱)') { currentCategory = 'spo_list'; return; }
+                            if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝘀𝘁𝗿𝗲𝗮𝗺𝘀 (𝗧𝗼𝗽 𝟭𝟬)') { currentCategory = 'spo_streams'; return; }
+                            if (colName === 'Youtube views') { currentCategory = 'yt_views'; return; }
 
-                        // ถ้ายอดรวมไม่มีข้อมูล ข้ามไป
-                        if (!colVal || colVal === '') return;
+                            if (!colVal || colVal === '') return;
 
-                        // สร้าง HTML แต่ละบรรทัดและแยกใส่กล่อง
-                        const rowHtml = createRow(colName, colVal, colDiff);
+                            const rowHtml = createRow(colName, colVal, colDiff);
 
-                        if (currentCategory === 'social') htmlSocial += rowHtml;
-                        if (currentCategory === 'yt_base') htmlYtBase += rowHtml;
-                        if (currentCategory === 'spo_base') htmlSpoBase += rowHtml;
-                        if (currentCategory === 'spo_list') htmlSpoList += rowHtml;
-                        if (currentCategory === 'spo_streams') htmlSpoStreams += rowHtml;
-                        if (currentCategory === 'yt_views') htmlYtViews += rowHtml;
-                    });
+                            if (currentCategory === 'social') htmlSocial += rowHtml;
+                            if (currentCategory === 'yt_base') htmlYtBase += rowHtml;
+                            if (currentCategory === 'spo_base') htmlSpoBase += rowHtml;
+                            if (currentCategory === 'spo_list') htmlSpoList += rowHtml;
+                            if (currentCategory === 'spo_streams') htmlSpoStreams += rowHtml;
+                            if (currentCategory === 'yt_views') htmlYtViews += rowHtml;
+                        });
 
-                    // ยัดโค้ดลงในกล่องหน้าเว็บ
-                    document.getElementById('box-social').innerHTML = htmlSocial;
-                    document.getElementById('box-yt-base').innerHTML = htmlYtBase;
-                    document.getElementById('box-spo-base').innerHTML = htmlSpoBase;
-                    document.getElementById('box-spotify-list').innerHTML = htmlSpoList;
-                    document.getElementById
+                        document.getElementById('box-social').innerHTML = htmlSocial;
+                        document.getElementById('box-yt-base').innerHTML = htmlYtBase;
+                        // แก้ไขชื่อให้ตรงกันแล้ว!
+                        document.getElementById('box-spotify-base').innerHTML = htmlSpoBase; 
+                        document.getElementById('box-spotify-list').innerHTML = htmlSpoList;
+                        document.getElementById('box-spotify-streams').innerHTML = htmlSpoStreams;
+                        document.getElementById('box-yt-views').innerHTML = htmlYtViews;
+                        
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('capture-area').style.display = 'block';
+                        document.getElementById('btn-save').style.display = 'block';
+                    } catch (e) {
+                        console.error(e);
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('error-msg').innerText = "พบปัญหา: " + e.message;
+                        document.getElementById('error-msg').style.display = 'block';
+                    }
+                },
+                error: function(err) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('error-msg').innerText = "ไม่สามารถเชื่อมต่อกับ Google Sheets ได้ โปรดรีเฟรช";
+                    document.getElementById('error-msg').style.display = 'block';
+                }
+            });
+        }
+
+        window.onload = loadData;
+    </script>
+</body>
+</html>
