@@ -5,89 +5,93 @@
     <title>TEN STATISTIC - Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    
+    <!-- เปลี่ยนมาใช้ฟอนต์ Prompt ที่ดูทันสมัยและคล้าย Canva มากขึ้น -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         body {
             background-color: #f0f0f0;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Prompt', sans-serif; /* เรียกใช้ฟอนต์ Prompt */
             display: flex; flex-direction: column; align-items: center; padding: 20px;
         }
 
-        /* กล่องใหญ่พื้นหลังสำหรับแคปรูป */
         .capture-wrapper {
             background-color: #e5e7eb;
-            padding: 30px;
+            padding: 40px;
             border-radius: 8px;
-            width: 1200px; /* ขยายให้กว้างพอสำหรับ 4 คอลัมน์ */
+            width: 1350px; 
         }
 
-        /* หัวกระดาษ */
-        .page-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        .page-header { text-align: center; margin-bottom: 30px; }
         .page-header h1 {
-            margin: 0; font-size: 36px; text-transform: uppercase;
-            letter-spacing: 2px;
+            margin: 0; font-size: 42px; text-transform: uppercase;
+            letter-spacing: 2px; font-weight: 700;
         }
-        .page-header p { margin: 5px 0 0 0; font-size: 16px; color: #555; }
+        .page-header p { margin: 5px 0 0 0; font-size: 18px; color: #4b5563; font-weight: 500; letter-spacing: 1px; }
 
-        /* การจัด Layout หลักแบบ Grid เหมือนใน Canva */
         .grid-container {
             display: grid;
-            grid-template-columns: 280px 280px 320px 280px; /* 4 คอลัมน์ */
-            gap: 15px;
+            grid-template-columns: 310px 310px 360px 310px;
+            gap: 20px;
             align-items: start;
         }
 
-        /* กลุ่มคอลัมน์ซ้ายสุด (Social + YouTube Base) */
-        .col-left { display: flex; flex-direction: column; gap: 15px; }
-        
-        /* กลุ่มคอลัมน์ขวาสุด (Spotify Listeners + Spotify Base) */
-        .col-right { display: flex; flex-direction: column; gap: 15px; }
+        .col-left, .col-right { display: flex; flex-direction: column; gap: 20px; }
 
-        /* ดีไซน์กล่องสถิติ (สีดำ) */
         .stat-box {
-            background-color: #1a1a24;
+            background-color: #1c1c24; 
             color: #ffffff;
-            padding: 20px 15px;
+            padding: 25px 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             box-sizing: border-box;
         }
         
-        /* สไตล์ของแต่ละหัวข้อกล่อง */
-        .header { font-size: 16px; font-weight: bold; letter-spacing: 1px; padding-bottom: 8px; margin-bottom: 15px; text-transform: uppercase; }
-        .h-purple { color: #c084fc; border-bottom: 3px solid #c084fc; } /* Social Followers */
-        .h-red { color: #ef4444; border-bottom: 3px solid #ef4444; }    /* Youtube */
-        .h-orange { color: #f97316; border-bottom: 3px solid #f97316; } /* Spotify */
+        .header { 
+            font-size: 15px; font-weight: 600; letter-spacing: 1px; 
+            padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase;
+            line-height: 1.4;
+        }
+        .h-purple { color: #a855f7; border-bottom: 2px solid #a855f7; }
+        .h-red { color: #ef4444; border-bottom: 2px solid #ef4444; }    
+        .h-orange { color: #f97316; border-bottom: 2px solid #f97316; } 
 
-        .row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; align-items: center;}
-        .platform-name { color: #d1d5db; width: 45%; }
-        .value-col { text-align: right; width: 25%; font-weight: bold;}
-        .diff-col { text-align: right; width: 30%; font-size: 11px;}
+        .row { 
+            display: flex; justify-content: space-between; margin-bottom: 12px; 
+            font-size: 14px; align-items: center; font-weight: 400;
+        }
         
-        .up { color: #10b981; font-weight: bold; }
-        .down { color: #ef4444; font-weight: bold; }
+        .platform-name { color: #d1d5db; width: 45%; line-height: 1.4; }
+        .value-col { text-align: right; width: 25%; font-weight: 500; }
+        .diff-col { text-align: right; width: 30%; font-size: 12px; font-weight: 500; }
+        
+        .up { color: #10b981; }
+        .down { color: #ef4444; }
 
-        .btn-download { margin-top: 20px; background-color: #a855f7; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        .btn-download { 
+            margin-top: 20px; background-color: #a855f7; color: white; border: none; 
+            padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600; 
+        }
         .btn-download:hover { background-color: #9333ea; }
-        #loading { font-weight: bold; margin-bottom: 20px; font-size: 18px; color: #333; }
-        #error-msg { display: none; color: red; font-weight: bold; }
+        #loading { font-weight: 600; margin-bottom: 20px; font-size: 18px; color: #333; }
+        #error-msg { display: none; color: red; font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <div id="loading">กำลังดึงข้อมูล... กรุณารอสักครู่</div>
+    <div id="loading">กำลังดึงข้อมูล...</div>
     <div id="error-msg"></div>
 
     <div class="capture-wrapper" id="capture-area" style="display: none;">
         <div class="page-header">
-            <h1 id="main-title">TEN <span style="font-weight: 300;">STATISTIC</span></h1>
+            <h1 id="main-title">TEN <span style="font-weight: 400;">STATISTIC</span></h1>
             <p id="sub-title">TEN LEE TEAM</p>
         </div>
 
         <div class="grid-container">
-            <!-- คอลัมน์ 1: Social & YouTube Base -->
             <div class="col-left">
                 <div class="stat-box">
                     <div class="header h-purple">SOCIAL FOLLOWERS</div>
@@ -99,22 +103,19 @@
                 </div>
             </div>
 
-            <!-- คอลัมน์ 2: YouTube Views -->
             <div class="stat-box">
                 <div class="header h-red">YOUTUBE VIEWS</div>
                 <div id="box-yt-views"></div>
             </div>
 
-            <!-- คอลัมน์ 3: Spotify Streams -->
             <div class="stat-box" style="width: 100%;">
-                <div class="header h-orange">SPOTIFY STREAMS (TOP 10)</div>
+                <div class="header h-orange">SPOTIFY STREAMS <br>(TOP 10)</div>
                 <div id="box-spotify-streams"></div>
             </div>
 
-            <!-- คอลัมน์ 4: Spotify Listeners & Spotify Base -->
             <div class="col-right">
                 <div class="stat-box">
-                    <div class="header h-orange">SPOTIFY LISTENERS (TOP 5)</div>
+                    <div class="header h-orange">SPOTIFY LISTENERS <br>(TOP 5)</div>
                     <div id="box-spotify-list"></div>
                 </div>
                 <div class="stat-box">
@@ -130,7 +131,15 @@
     <script>
         function formatDiff(diffValue) {
             if (!diffValue) return '';
-            const strValue = String(diffValue).trim();
+            let strValue = String(diffValue).trim();
+            
+            strValue = strValue.replace(/▲\s*▲/g, '▲');
+            strValue = strValue.replace(/▼\s*▼/g, '▼');
+
+            strValue = strValue.replace(/([+-]\s?)(\d{4,})/g, function(match, p1, p2) {
+                return p1 + parseInt(p2).toLocaleString();
+            });
+
             if (strValue.includes('▲')) return `<span class="up">${strValue}</span>`;
             if (strValue.includes('▼')) return `<span class="down">${strValue}</span>`;
             return `<span>${strValue}</span>`;
@@ -144,17 +153,21 @@
         }
 
         function createRow(name, val, diff) {
+            let cleanDiff = formatDiff(diff);
+            if(cleanDiff.includes('for 7 days')) {
+                 cleanDiff = cleanDiff.replace('for 7 days', '<br>for 7 days');
+            }
+
             return `
                 <div class="row">
                     <span class="platform-name">${name}</span>
                     <span class="value-col">${formatNumber(val)}</span>
-                    <span class="diff-col">${formatDiff(diff)}</span>
+                    <span class="diff-col">${cleanDiff}</span>
                 </div>
             `;
         }
 
         function loadData() {
-            // ลิงก์ตรงที่ถูกต้องของคุณ
             const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=60150505&single=true&output=csv';
 
             Papa.parse(sheetUrl, {
@@ -174,27 +187,29 @@
                         let currentCategory = '';
 
                         data.forEach((row, index) => {
-                            if (index === 0 && row[1]) {
-                                document.getElementById('sub-title').innerText = "TEN LEE TEAM • " + row[1].replace('TEN STATISTIC :', '').trim();
+                            const colA = row[0] ? String(row[0]).trim() : ''; 
+                            const colB = row[1] ? String(row[1]).trim() : ''; 
+                            const colC = row[2] ? String(row[2]).trim() : ''; 
+                            const colD = row[3] ? String(row[3]).trim() : ''; 
+
+                            if (colB.includes('TEN STATISTIC')) {
+                                const dateStr = colB.replace('TEN STATISTIC :', '').trim();
+                                document.getElementById('sub-title').innerText = "TEN LEE TEAM • " + dateStr;
                                 return;
                             }
 
-                            const colName = row[1] ? String(row[1]).trim() : ''; 
-                            const colVal = row[2] ? String(row[2]).trim() : ''; 
-                            const colDiff = row[3] ? String(row[3]).trim() : ''; 
+                            if (!colB) return;
 
-                            if (!colName) return;
+                            if (colB === '𝗙𝗼𝗹𝗹𝗼𝘄𝗲𝗿𝘀') { currentCategory = 'social'; return; }
+                            if (colB === 'YouTube (@tenoffcl):' || colB === 'YouTube (@tenoffcl)') { currentCategory = 'yt_base'; return; }
+                            if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆') { currentCategory = 'spo_base'; return; }
+                            if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝗹𝗶𝘀𝘁𝗲𝗻𝗲𝗿𝘀 (𝗧𝗼𝗽 𝟱)') { currentCategory = 'spo_list'; return; }
+                            if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝘀𝘁𝗿𝗲𝗮𝗺𝘀 (𝗧𝗼𝗽 𝟭𝟬)') { currentCategory = 'spo_streams'; return; }
+                            if (colB === 'Youtube views' || colB === '𝗬𝗼𝘂𝘁𝘂𝗯𝗲 𝗩𝗶𝗲𝘄𝘀') { currentCategory = 'yt_views'; return; }
 
-                            if (colName === '𝗙𝗼𝗹𝗹𝗼𝘄𝗲𝗿𝘀') { currentCategory = 'social'; return; }
-                            if (colName === 'YouTube (@tenoffcl):') { currentCategory = 'yt_base'; return; }
-                            if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆') { currentCategory = 'spo_base'; return; }
-                            if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝗹𝗶𝘀𝘁𝗲𝗻𝗲𝗿𝘀 (𝗧𝗼𝗽 𝟱)') { currentCategory = 'spo_list'; return; }
-                            if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝘀𝘁𝗿𝗲𝗮𝗺𝘀 (𝗧𝗼𝗽 𝟭𝟬)') { currentCategory = 'spo_streams'; return; }
-                            if (colName === 'Youtube views') { currentCategory = 'yt_views'; return; }
+                            if (!colC || colC === '') return;
 
-                            if (!colVal || colVal === '') return;
-
-                            const rowHtml = createRow(colName, colVal, colDiff);
+                            const rowHtml = createRow(colB, colC, colD);
 
                             if (currentCategory === 'social') htmlSocial += rowHtml;
                             if (currentCategory === 'yt_base') htmlYtBase += rowHtml;
@@ -206,7 +221,6 @@
 
                         document.getElementById('box-social').innerHTML = htmlSocial;
                         document.getElementById('box-yt-base').innerHTML = htmlYtBase;
-                        // แก้ไขชื่อให้ตรงกันแล้ว!
                         document.getElementById('box-spotify-base').innerHTML = htmlSpoBase; 
                         document.getElementById('box-spotify-list').innerHTML = htmlSpoList;
                         document.getElementById('box-spotify-streams').innerHTML = htmlSpoStreams;
@@ -221,11 +235,6 @@
                         document.getElementById('error-msg').innerText = "พบปัญหา: " + e.message;
                         document.getElementById('error-msg').style.display = 'block';
                     }
-                },
-                error: function(err) {
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('error-msg').innerText = "ไม่สามารถเชื่อมต่อกับ Google Sheets ได้ โปรดรีเฟรช";
-                    document.getElementById('error-msg').style.display = 'block';
                 }
             });
         }
