@@ -25,18 +25,10 @@
         }
 
         .page-header { text-align: center; margin-bottom: 40px; }
-        .page-header h1 {
-            margin: 0; font-size: 48px; text-transform: uppercase;
-            letter-spacing: 4px; font-weight: 800; color: #111827;
-        }
+        
         .page-header p { 
             margin: 8px 0 0 0; font-size: 16px; color: #6b7280; 
-            font-weight: 700; letter-spacing: 2px; 
-        }
-        .page-header::after {
-            content: ''; display: block; width: 120px; height: 4px;
-            background: linear-gradient(90deg, #a855f7, #f97316);
-            margin: 20px auto 0; border-radius: 2px;
+            font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
         }
 
         .grid-container {
@@ -66,7 +58,6 @@
         .h-red { color: #ef4444; border-bottom: 2px solid #ef4444; }    
         .h-orange { color: #f97316; border-bottom: 2px solid #f97316; } 
 
-        /* จัดการเลย์เอาต์แถวใหม่ให้แข็งแรง ไม่เบียด ไม่ตก */
         .row { 
             display: flex; 
             justify-content: space-between; 
@@ -75,7 +66,6 @@
             font-size: 13.5px; 
         }
         
-        /* ให้ชื่อเพลงกินพื้นที่ที่เหลือ และปัดบรรทัดถ้ายาวไป */
         .platform-name { 
             flex: 1; 
             color: #d1d5db; 
@@ -83,12 +73,12 @@
             font-weight: 500;
             padding-right: 10px;
         }
-        /* ล็อกความกว้างช่องตัวเลขให้คงที่ จะได้ไม่โดนชื่อเพลงเบียด */
         .value-col { width: 85px; text-align: right; font-weight: 600; }
         .diff-col { width: 95px; text-align: right; font-size: 12px; font-weight: 600; }
         
         .up { color: #10b981; }
         .down { color: #ef4444; }
+        .equal { color: #c084fc; } /* สีม่วงอ่อนสำหรับเครื่องหมาย = */
 
         .btn-download { 
             margin-top: 20px; background-color: #a855f7; color: white; border: none; 
@@ -107,7 +97,8 @@
 
     <div class="capture-wrapper" id="capture-area" style="display: none;">
         <div class="page-header">
-            <h1 id="main-title">TEN <span style="font-weight: 400;">STATISTIC</span></h1>
+            <!-- ดึงโลโก้มาแสดง (แก้ไขชื่อไฟล์แล้ว) -->
+            <img src="statslogo.png" alt="TEN STATISTIC" style="height: 65px; margin: 0 auto 10px auto; display: block;">
             <p id="sub-title">TEN LEE TEAM</p>
         </div>
 
@@ -157,8 +148,12 @@
             strValue = strValue.replace(/([+-]\s?)(\d{4,})/g, function(match, p1, p2) {
                 return p1 + parseInt(p2).toLocaleString();
             });
+            
+            // ดักจับเครื่องหมาย = ให้เป็นสีม่วงอ่อน
+            if (strValue.includes('=')) return `<span class="equal">${strValue}</span>`;
             if (strValue.includes('▲')) return `<span class="up">${strValue}</span>`;
             if (strValue.includes('▼')) return `<span class="down">${strValue}</span>`;
+            
             return `<span>${strValue}</span>`;
         }
 
@@ -249,9 +244,14 @@
         }
 
         function saveAsImage() {
-            window.scrollTo(0, 0); // เลื่อนขึ้นบนสุดก่อนแคป
+            window.scrollTo(0, 0);
             const box = document.getElementById('capture-area');
-            html2canvas(box, { scale: 2, backgroundColor: '#e5e7eb' }).then(canvas => {
+            html2canvas(box, { 
+                scale: 2, 
+                backgroundColor: '#e5e7eb',
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'ten-statistic.png';
                 link.href = canvas.toDataURL('image/png');
