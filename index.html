@@ -54,7 +54,6 @@
         .h-red { color: #ef4444; border-bottom: 2px solid #ef4444; }    
         .h-orange { color: #f97316; border-bottom: 2px solid #f97316; } 
 
-        /* แก้ปัญหาชื่อเพลงโดนตัด 3 บรรทัดด้วย Grid 1fr auto auto */
         .row { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; margin-bottom: 14px; font-size: 13.5px; align-items: center; }
         .platform-name { color: #d1d5db; line-height: 1.3; font-weight: 500; }
         .value-col { text-align: right; font-weight: 600; white-space: nowrap; }
@@ -91,7 +90,8 @@
         <button class="tab-btn" onclick="switchTab('tab-charts')">🏆 CHARTS</button>
     </div>
 
-    <div id="loading">กำลังดึงข้อมูล...</div>
+    <!-- โชว์สถานะการโหลดข้อมูล -->
+    <div id="loading">⏳ กำลังประมวลผลข้อมูล... กรุณารอสักครู่</div>
     <div id="error-msg"></div>
 
     <!-- แท็บ 1: OVERALL -->
@@ -150,7 +150,7 @@
     <button class="btn-download" onclick="saveAsImage()" style="display: none;" id="btn-save">📸 ดาวน์โหลดรูปภาพ</button>
 
     <script>
-        // === ลิงก์ CSV ของแต่ละชีท ===
+        // === ลิงก์ CSV จาก Google Sheets ===
         const CSV_OVERALL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=60150505&single=true&output=csv';
         const CSV_SPO = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=907365518&single=true&output=csv'; 
         const CSV_YTMS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=1171176371&single=true&output=csv'; 
@@ -188,146 +188,187 @@
             return num.toLocaleString();
         }
 
-        function loadOverall() {
-            if(!CSV_OVERALL) return;
-            Papa.parse(CSV_OVERALL, {
-                download: true, header: false,
-                complete: function(results) {
-                    try {
-                        const data = results.data;
-                        let htmlSocial = '', htmlYtBase = '', htmlYtViews = '';
-                        let htmlSpoStreams = '', htmlSpoList = '', htmlSpoBase = '';
-                        let currentCategory = '';
-
-                        data.forEach(row => {
-                            const colB = row[1] ? String(row[1]).trim() : ''; 
-                            const colC = row[2] ? String(row[2]).trim() : ''; 
-                            const colD = row[3] ? String(row[3]).trim() : ''; 
-
-                            if (colB.includes('TEN STATISTIC')) {
-                                document.getElementById('sub-title-overall').innerText = "TEN LEE TEAM • " + colB.replace('TEN STATISTIC :', '').trim();
-                                return;
-                            }
-                            if (!colB) return;
-                            if (colB === '𝗙𝗼𝗹𝗹𝗼𝘄𝗲𝗿𝘀') { currentCategory = 'social'; return; }
-                            if (colB === 'YouTube (@tenoffcl):' || colB === 'YouTube (@tenoffcl)') { currentCategory = 'yt_base'; return; }
-                            if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆') { currentCategory = 'spo_base'; return; }
-                            if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝗹𝗶𝘀𝘁𝗲𝗻𝗲𝗿𝘀 (𝗧𝗼𝗽 𝟱)') { currentCategory = 'spo_list'; return; }
-                            if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝘀𝘁𝗿𝗲𝗮𝗺𝘀 (𝗧𝗼𝗽 𝟭𝟬)') { currentCategory = 'spo_streams'; return; }
-                            if (colB === 'Youtube views' || colB === '𝗬𝗼𝘂𝘁𝘂𝗯𝗲 𝗩𝗶𝗲𝘄𝘀') { currentCategory = 'yt_views'; return; }
-                            if (!colC) return;
-
-                            let cleanDiff = formatDiff(colD);
-                            if(cleanDiff.includes('for 7 days')) cleanDiff = cleanDiff.replace('for 7 days', '<br>for 7 days');
-                            
-                            const rowHtml = `<div class="row"><span class="platform-name">${colB}</span><span class="value-col">${formatNumber(colC)}</span><span class="diff-col">${cleanDiff}</span></div>`;
-
-                            if (currentCategory === 'social') htmlSocial += rowHtml;
-                            if (currentCategory === 'yt_base') htmlYtBase += rowHtml;
-                            if (currentCategory === 'spo_base') htmlSpoBase += rowHtml;
-                            if (currentCategory === 'spo_list') htmlSpoList += rowHtml;
-                            if (currentCategory === 'spo_streams') htmlSpoStreams += rowHtml;
-                            if (currentCategory === 'yt_views') htmlYtViews += rowHtml;
-                        });
-
-                        document.getElementById('box-social').innerHTML = htmlSocial;
-                        document.getElementById('box-yt-base').innerHTML = htmlYtBase;
-                        document.getElementById('box-spotify-base').innerHTML = htmlSpoBase; 
-                        document.getElementById('box-spotify-list').innerHTML = htmlSpoList;
-                        document.getElementById('box-spotify-streams').innerHTML = htmlSpoStreams;
-                        document.getElementById('box-yt-views').innerHTML = htmlYtViews;
-                        
-                        document.getElementById('loading').style.display = 'none';
-                        document.getElementById('btn-save').style.display = 'block';
-                    } catch (e) { console.error(e); }
-                }
-            });
+        // ฟังก์ชันดึงข้อมูลแบบใหม่ (กันโหลดค้าง)
+        async function fetchCSV(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) return null;
+                const text = await response.text();
+                return Papa.parse(text).data;
+            } catch (err) {
+                console.error("Fetch error: ", err);
+                return null;
+            }
         }
 
-        // อ่านข้อมูลจากคอลัมน์ B, C, D (row[1], row[2], row[3]) แทน
-        function generateListTable(csvUrl, tableId, titleId, datePrefix) {
-            if(!csvUrl) return;
-            Papa.parse(csvUrl, {
-                download: true, header: false,
-                complete: function(results) {
-                    let html = '';
-                    results.data.forEach(row => {
-                        // ปรับให้อ่านเริ่มจาก Column B
-                        const colName = row[1] ? String(row[1]).trim() : '';
-                        const colVal = row[2] ? String(row[2]).trim() : '';
-                        const colDiff = row[3] ? String(row[3]).trim() : '';
-                        
-                        // เอา row[0] และ row[1] มารวมกันเช็กเผื่อวันที่อยู่คอลัมน์ A หรือ B
-                        const rawTitle = (row[0] || '') + ' ' + colName; 
+        function processOverall(data) {
+            let htmlSocial = '', htmlYtBase = '', htmlYtViews = '';
+            let htmlSpoStreams = '', htmlSpoList = '', htmlSpoBase = '';
+            let currentCategory = '';
 
-                        if (rawTitle.includes(datePrefix)) {
-                            let dateParts = rawTitle.split(':');
-                            let dateVal = dateParts.length > 1 ? dateParts[1].trim() : rawTitle.replace(datePrefix, '').trim();
-                            
-                            if (titleId === 'date-ytms') {
-                                document.getElementById(titleId).innerText = dateVal;
-                            } else {
-                                document.getElementById(titleId).innerText = "TEN LEE TEAM • " + dateVal;
-                            }
-                            return;
-                        }
+            data.forEach(row => {
+                if (!row) return;
+                const colB = row[1] ? String(row[1]).trim() : ''; 
+                const colC = row[2] ? String(row[2]).trim() : ''; 
+                const colD = row[3] ? String(row[3]).trim() : ''; 
 
-                        if (colName === 'streams' || colVal === 'streams' || (!colName && !colVal)) return;
-
-                        if (colName && !colVal && !colDiff) {
-                            html += `<tr class="section-title"><td colspan="3">${colName}</td></tr>`;
-                        } else if (colName.toUpperCase().includes('TOTAL') || colName.toUpperCase().includes('ALBUM')) {
-                            html += `<tr class="total-row">
-                                <td style="width: 40%; padding-left: 15px;">${colName}</td>
-                                <td style="width: 30%; text-align: right;">${formatNumber(colVal)}</td>
-                                <td style="width: 30%; text-align: right;">${formatDiff(colDiff)}</td>
-                            </tr>`;
-                        } else if (colName && colVal) {
-                            html += `<tr>
-                                <td class="song-name" style="width: 40%; padding-left: 15px;">${colName}</td>
-                                <td class="song-value" style="width: 30%;">${formatNumber(colVal)}</td>
-                                <td class="song-diff" style="width: 30%;">${formatDiff(colDiff)}</td>
-                            </tr>`;
-                        }
-                    });
-                    document.getElementById(tableId).innerHTML = html;
+                if (colB.includes('TEN STATISTIC')) {
+                    document.getElementById('sub-title-overall').innerText = "TEN LEE TEAM • " + colB.replace('TEN STATISTIC :', '').trim();
+                    return;
                 }
+                if (!colB) return;
+                
+                if (colB === '𝗙𝗼𝗹𝗹𝗼𝘄𝗲𝗿𝘀') { currentCategory = 'social'; return; }
+                if (colB === 'YouTube (@tenoffcl):' || colB === 'YouTube (@tenoffcl)') { currentCategory = 'yt_base'; return; }
+                if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆') { currentCategory = 'spo_base'; return; }
+                if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝗹𝗶𝘀𝘁𝗲𝗻𝗲𝗿𝘀 (𝗧𝗼𝗽 𝟱)') { currentCategory = 'spo_list'; return; }
+                if (colB === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝘀𝘁𝗿𝗲𝗮𝗺𝘀 (𝗧𝗼𝗽 𝟭𝟬)') { currentCategory = 'spo_streams'; return; }
+                if (colB === 'Youtube views' || colB === '𝗬𝗼𝘂𝘁𝘂𝗯𝗲 𝗩𝗶𝗲𝘄𝘀') { currentCategory = 'yt_views'; return; }
+                if (!colC) return;
+
+                let cleanDiff = formatDiff(colD);
+                if(cleanDiff.includes('for 7 days')) cleanDiff = cleanDiff.replace('for 7 days', '<br>for 7 days');
+                
+                const rowHtml = `<div class="row"><span class="platform-name">${colB}</span><span class="value-col">${formatNumber(colC)}</span><span class="diff-col">${cleanDiff}</span></div>`;
+
+                if (currentCategory === 'social') htmlSocial += rowHtml;
+                if (currentCategory === 'yt_base') htmlYtBase += rowHtml;
+                if (currentCategory === 'spo_base') htmlSpoBase += rowHtml;
+                if (currentCategory === 'spo_list') htmlSpoList += rowHtml;
+                if (currentCategory === 'spo_streams') htmlSpoStreams += rowHtml;
+                if (currentCategory === 'yt_views') htmlYtViews += rowHtml;
             });
+
+            document.getElementById('box-social').innerHTML = htmlSocial;
+            document.getElementById('box-yt-base').innerHTML = htmlYtBase;
+            document.getElementById('box-spotify-base').innerHTML = htmlSpoBase; 
+            document.getElementById('box-spotify-list').innerHTML = htmlSpoList;
+            document.getElementById('box-spotify-streams').innerHTML = htmlSpoStreams;
+            document.getElementById('box-yt-views').innerHTML = htmlYtViews;
         }
 
-        // อ่านข้อมูลจากคอลัมน์ B, C, D, E, F (row[1] ถึง row[5]) แทน
-        function generateChartsTable(csvUrl) {
-            if(!csvUrl) return;
-            Papa.parse(csvUrl, {
-                download: true, header: false,
-                complete: function(results) {
-                    let html = '';
-                    results.data.forEach(row => {
-                        // ปรับให้อ่านเริ่มจาก Column B เป็นต้นไป
-                        const colA = row[1] ? String(row[1]).trim() : '';
-                        const colB = row[2] ? String(row[2]).trim() : '';
-                        const colC = row[3] ? String(row[3]).trim() : '';
-                        const colD = row[4] ? String(row[4]).trim() : '';
-                        const colE = row[5] ? String(row[5]).trim() : '';
+        function processListTable(data, tableId, titleId, datePrefix) {
+            let html = '';
+            data.forEach(row => {
+                if (!row) return;
+                const colName = row[1] ? String(row[1]).trim() : '';
+                const colVal = row[2] ? String(row[2]).trim() : '';
+                const colDiff = row[3] ? String(row[3]).trim() : '';
+                
+                const rawTitle = (row[0] || '') + ' ' + colName; 
 
-                        const rawTitle = (row[0] || '') + ' ' + colA + ' ' + colB;
+                if (rawTitle.includes(datePrefix)) {
+                    let dateParts = rawTitle.split(':');
+                    let dateVal = dateParts.length > 1 ? dateParts[1].trim() : rawTitle.replace(datePrefix, '').trim();
+                    
+                    if (titleId === 'date-ytms') {
+                        document.getElementById(titleId).innerText = dateVal;
+                    } else {
+                        document.getElementById(titleId).innerText = "TEN LEE TEAM • " + dateVal;
+                    }
+                    return;
+                }
 
-                        if (rawTitle.includes("Charts :") || rawTitle.includes("TEN'S Music Charts")) {
-                            let dateParts = rawTitle.split(':');
-                            let dateVal = dateParts.length > 1 ? dateParts[1].trim() : rawTitle.replace("TEN'S Music Charts", '').trim();
-                            document.getElementById('date-charts').innerText = dateVal;
-                            return;
-                        }
+                if (colName === 'streams' || colVal === 'streams' || (!colName && !colVal)) return;
 
-                        if (!colA && !colB) return;
-                        if (colB === 'Country' || colC === 'Name') return;
+                if (colName && !colVal && !colDiff) {
+                    html += `<tr class="section-title"><td colspan="3">${colName}</td></tr>`;
+                } else if (colName.toUpperCase().includes('TOTAL') || colName.toUpperCase().includes('ALBUM')) {
+                    html += `<tr class="total-row">
+                        <td style="width: 40%; padding-left: 15px;">${colName}</td>
+                        <td style="width: 30%; text-align: right;">${formatNumber(colVal)}</td>
+                        <td style="width: 30%; text-align: right;">${formatDiff(colDiff)}</td>
+                    </tr>`;
+                } else if (colName && colVal) {
+                    html += `<tr>
+                        <td class="song-name" style="width: 40%; padding-left: 15px;">${colName}</td>
+                        <td class="song-value" style="width: 30%;">${formatNumber(colVal)}</td>
+                        <td class="song-diff" style="width: 30%;">${formatDiff(colDiff)}</td>
+                    </tr>`;
+                }
+            });
+            document.getElementById(tableId).innerHTML = html;
+        }
 
-                        if (colA && !colB && !colC && !colD) {
-                            html += `<tr class="section-title"><td colspan="5">${colA}</td></tr>`;
-                        } else if (colA || colB) {
-                            html += `<tr>
-                                <td style="width: 25%; color: #d1d5db; padding-left: 15px;">${colA}</td>
-                                <td style="width: 15%; color: #9ca3af;">${colB}</td>
-                                <td style="width: 30%; font-weight: 600; text-align: center;">${colC}</td>
-                                <td style="width: 15%; text-align: right; font-weight: 600; font-size: 16px;">${colD}</td>
-                                <td style="width: 15%; text-align: right;">${
+        function processChartsTable(data) {
+            let html = '';
+            data.forEach(row => {
+                if (!row) return;
+                const colA = row[1] ? String(row[1]).trim() : '';
+                const colB = row[2] ? String(row[2]).trim() : '';
+                const colC = row[3] ? String(row[3]).trim() : '';
+                const colD = row[4] ? String(row[4]).trim() : '';
+                const colE = row[5] ? String(row[5]).trim() : '';
+
+                const rawTitle = (row[0] || '') + ' ' + colA + ' ' + colB;
+
+                if (rawTitle.includes("Charts :") || rawTitle.includes("TEN'S Music Charts")) {
+                    let dateParts = rawTitle.split(':');
+                    let dateVal = dateParts.length > 1 ? dateParts[1].trim() : rawTitle.replace("TEN'S Music Charts", '').replace(":", "").trim();
+                    document.getElementById('date-charts').innerText = dateVal;
+                    return;
+                }
+
+                if (!colA && !colB) return;
+                if (colB === 'Country' || colC === 'Name') return;
+
+                if (colA && !colB && !colC && !colD) {
+                    html += `<tr class="section-title"><td colspan="5">${colA}</td></tr>`;
+                } else if (colA || colB) {
+                    html += `<tr>
+                        <td style="width: 25%; color: #d1d5db; padding-left: 15px;">${colA}</td>
+                        <td style="width: 15%; color: #9ca3af;">${colB}</td>
+                        <td style="width: 30%; font-weight: 600; text-align: center;">${colC}</td>
+                        <td style="width: 15%; text-align: right; font-weight: 600; font-size: 16px;">${colD}</td>
+                        <td style="width: 15%; text-align: right;">${formatDiff(colE)}</td>
+                    </tr>`;
+                }
+            });
+            document.getElementById('table-charts').innerHTML = html;
+        }
+
+        // โหลดข้อมูลทุกชีทพร้อมกันตอนเปิดเว็บ
+        async function loadAllData() {
+            try {
+                const [dataOverall, dataSpo, dataYtms, dataCharts] = await Promise.all([
+                    fetchCSV(CSV_OVERALL),
+                    fetchCSV(CSV_SPO),
+                    fetchCSV(CSV_YTMS),
+                    fetchCSV(CSV_CHARTS)
+                ]);
+
+                if (dataOverall) processOverall(dataOverall);
+                if (dataSpo) processListTable(dataSpo, 'table-spo', 'sub-title-spo', 'Spotify Streams');
+                if (dataYtms) processListTable(dataYtms, 'table-ytms', 'date-ytms', 'YouTube Music Streams');
+                if (dataCharts) processChartsTable(dataCharts);
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('btn-save').style.display = 'block';
+            } catch (error) {
+                console.error("Load all data error: ", error);
+                document.getElementById('loading').innerText = '❌ เกิดข้อผิดพลาดในการโหลดข้อมูล (กรุณารีเฟรชหน้าเว็บใหม่)';
+            }
+        }
+
+        window.onload = loadAllData;
+
+        function saveAsImage() {
+            window.scrollTo(0, 0);
+            const box = document.getElementById(currentActiveTab);
+            const btn = document.getElementById('btn-save');
+            const oldText = btn.innerText;
+            btn.innerText = '⏳ กำลังประมวลผล...';
+
+            html2canvas(box, { 
+                scale: 2, backgroundColor: '#e5e7eb', useCORS: true 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = currentActiveTab + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                btn.innerText = oldText;
+            });
+        }
+    </script>
+</body>
+</html>
