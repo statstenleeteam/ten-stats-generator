@@ -26,11 +26,13 @@
 
         .page-header { text-align: center; margin-bottom: 40px; }
         
-        /* ขยายขนาดโลโก้ให้ใหญ่ขึ้นตรงนี้ (เปลี่ยนจาก 65px เป็น 110px) */
+        /* --- เวทมนตร์อยู่ตรงนี้ --- */
         .page-header img {
-            height: 110px; 
+            width: 450px; /* ขยายความกว้างให้ใหญ่สะใจ! (ปรับตัวเลขเพิ่ม/ลดได้) */
+            height: auto; 
             margin: 0 auto 15px auto; 
             display: block;
+            mix-blend-mode: multiply; /* โค้ดลับลบพื้นหลังสีขาวให้กลายเป็นใส */
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
@@ -244,7 +246,6 @@
                         document.getElementById('btn-save').style.display = 'block';
                     } catch (e) {
                         console.error(e);
-                        document.getElementById('loading').style.display = 'none';
                         document.getElementById('error-msg').innerText = "พบปัญหา: " + e.message;
                         document.getElementById('error-msg').style.display = 'block';
                     }
