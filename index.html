@@ -71,11 +71,13 @@
 
         .btn-download { margin-top: 20px; background-color: #a855f7; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
         #loading { font-weight: bold; margin-bottom: 20px; }
+        #error-msg { color: red; font-weight: bold; margin-bottom: 20px; display: none; }
     </style>
 </head>
 <body>
 
-    <div id="loading">กำลังดึงข้อมูลจากชีท For post...</div>
+    <div id="loading">กำลังดึงข้อมูลจากชีท For post... (อาจใช้เวลา 2-3 วินาที)</div>
+    <div id="error-msg">เกิดข้อผิดพลาดในการดึงข้อมูล โปรดรีเฟรชหน้าเว็บ หรือตรวจสอบลิงก์ Google Sheets</div>
 
     <div class="capture-wrapper" id="capture-area" style="display: none;">
         <div class="page-header">
@@ -149,10 +151,11 @@
         }
 
         function loadData() {
-            // *** นำลิงก์ CSV ของหน้า "For post" มาวางด้านล่างนี้ ***
-            const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=60150505&single=true&output=csv';
+            // ลิงก์ของคุณ + ระบบ Proxy ฟรีเพื่อแก้ปัญหา CORS
+            const targetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=60150505&single=true&output=csv';
+            const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl);
 
-            Papa.parse(sheetUrl, {
+            Papa.parse(proxyUrl, {
                 download: true,
                 header: false,
                 complete: function(results) {
@@ -170,7 +173,7 @@
                     data.forEach((row, index) => {
                         // ดึงวันที่จากบรรทัดที่ 1 (อิงจากชีท For post)
                         if (index === 0 && row[1]) {
-                            document.getElementById('sub-title').innerText = "TEN LEE TEAM • " + row[1].replace('TEN STATISTIC : ', '').trim();
+                            document.getElementById('sub-title').innerText = "TEN LEE TEAM • " + row[1].replace('TEN STATISTIC :', '').trim();
                             return;
                         }
 
@@ -187,7 +190,7 @@
                         if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆') { currentCategory = 'spo_base'; return; }
                         if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝗹𝗶𝘀𝘁𝗲𝗻𝗲𝗿𝘀 (𝗧𝗼𝗽 𝟱)') { currentCategory = 'spo_list'; return; }
                         if (colName === '𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝘀𝘁𝗿𝗲𝗮𝗺𝘀 (𝗧𝗼𝗽 𝟭𝟬)') { currentCategory = 'spo_streams'; return; }
-                        if (colName === 'Youtube views') { currentCategory = 'yt_views'; return; }
+                        if (colName === 'Youtube views' || colName === '𝗬𝗼𝘂𝘁𝘂𝗯𝗲 𝗩𝗶𝗲𝘄𝘀') { currentCategory = 'yt_views'; return; }
 
                         // ถ้ายอดรวมไม่มีข้อมูล ข้ามไป
                         if (!colVal || colVal === '') return;
@@ -208,27 +211,4 @@
                     document.getElementById('box-yt-base').innerHTML = htmlYtBase;
                     document.getElementById('box-spo-base').innerHTML = htmlSpoBase;
                     document.getElementById('box-spotify-list').innerHTML = htmlSpoList;
-                    document.getElementById('box-spotify-streams').innerHTML = htmlSpoStreams;
-                    document.getElementById('box-yt-views').innerHTML = htmlYtViews;
-                    
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('capture-area').style.display = 'block';
-                    document.getElementById('btn-save').style.display = 'block';
-                }
-            });
-        }
-
-        function saveAsImage() {
-            const box = document.getElementById('capture-area');
-            html2canvas(box, { scale: 2, backgroundColor: '#f0f0f0' }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'ten-all-stats.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
-        }
-
-        window.onload = loadData;
-    </script>
-</body>
-</html>
+                    document.getElementById
