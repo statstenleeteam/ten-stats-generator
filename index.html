@@ -295,11 +295,15 @@
             document.getElementById('box-yt-views').innerHTML = htmlYtViews;
         }
 
+        // --- เพิ่มระบบล้างเครื่องหมายฝนทองป้องก้นการดึงเพลงพลาด ---
         function reorderSingleSongs(data) {
             let birthdayIndex = -1;
             let songsToMove = [];
             let targetSongs = ["If You Don't Mean It", "No Pressure", "OUTWEST", "IRL"];
             let newData = [];
+
+            // ฟังก์ชันช่วยล้างฝนทอง (' และ ’) ออก
+            const cleanStr = (s) => String(s || '').toLowerCase().replace(/['"’]/g, '').trim();
 
             for (let i = 0; i < data.length; i++) {
                 if (!data[i]) continue;
@@ -307,7 +311,7 @@
                 
                 let isTarget = false;
                 for(let t of targetSongs) {
-                    if(colName.toLowerCase() === t.toLowerCase()) {
+                    if(cleanStr(colName) === cleanStr(t)) {
                         isTarget = true;
                         break;
                     }
@@ -322,7 +326,7 @@
 
             for (let i = 0; i < newData.length; i++) {
                 let colName = newData[i][1] ? String(newData[i][1]).trim() : '';
-                if (colName.toLowerCase() === "birthday inst.") {
+                if (cleanStr(colName) === "birthday inst.") {
                     birthdayIndex = i;
                     break;
                 }
@@ -331,14 +335,14 @@
             if (birthdayIndex === -1) {
                 for (let i = 0; i < newData.length; i++) {
                     let colName = newData[i][1] ? String(newData[i][1]).trim() : '';
-                    if (colName.toLowerCase() === "birthday") { birthdayIndex = i; break; }
+                    if (cleanStr(colName) === "birthday") { birthdayIndex = i; break; }
                 }
             }
 
             if (birthdayIndex !== -1 && songsToMove.length > 0) {
                 let orderedSongs = [];
                 targetSongs.forEach(target => {
-                    let found = songsToMove.find(s => s[1].trim().toLowerCase() === target.toLowerCase());
+                    let found = songsToMove.find(s => cleanStr(s[1]) === cleanStr(target));
                     if(found) orderedSongs.push(found);
                 });
                 newData.splice(birthdayIndex + 1, 0, ...orderedSongs);
