@@ -26,7 +26,7 @@
         .tab-section { display: none; margin: 0 auto; }
         .tab-section.active { display: block; }
 
-        /* --- กรอบของแผ่น Spotify / YT Music (Auto Height) --- */
+        /* --- กรอบของแผ่น Spotify / YT Music --- */
         .page-slice {
             background-color: #f3effc;
             padding: 40px;
@@ -39,10 +39,10 @@
             min-height: 200px;
         }
 
-        /* --- หน้า Overall (จัดกึ่งกลางแนวตั้ง) --- */
+        /* --- หน้า Overall --- */
         #overall-page {
             width: 1350px; 
-            height: 1012px; /* ล็อกสัดส่วน 4:3 */
+            height: 1012px; 
             background-color: #e5e7eb; 
             display: flex; 
             flex-direction: column; 
@@ -59,9 +59,15 @@
         .overall-header p { margin: 12px 0 0 0; font-size: 18px; color: #4b5563; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
         .overall-header::after { content: ''; display: block; width: 100px; height: 4px; background: linear-gradient(90deg, #a855f7, #f97316); margin: 25px auto 0; border-radius: 2px; }
 
-        .grid-container { display: flex; gap: 20px; align-items: start; width: 100%; }
-        .col-layout { display: flex; flex-direction: column; gap: 25px; width: 310px; }
-        .col-mid { width: 360px; }
+        /* ปรับ Grid ของหน้า Overall ใหม่ เป็น 3 คอลัมน์หลัก */
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; /* 3 คอลัมน์เท่าๆ กัน */
+            gap: 20px; 
+            align-items: start; 
+            width: 100%; 
+        }
+        .col-layout { display: flex; flex-direction: column; gap: 25px; height: 100%; }
         
         .stat-box-overall { 
             background-color: #1c1c24; color: #ffffff; padding: 30px; border-radius: 14px; 
@@ -78,12 +84,19 @@
         .h-red { color: #ef4444; border-bottom: 3px solid #ef4444; }    
         .h-orange { color: #f97316; border-bottom: 3px solid #f97316; } 
 
-        .row-overall { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; margin-bottom: 18px; font-size: 14.5px; align-items: center; }
+        /* ปรับ Row Overall ใหม่ให้ขวาชิดจริงๆ */
+        .row-overall { 
+            display: flex; /* เปลี่ยนจาก grid เป็น flex */
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 18px; 
+            font-size: 14.5px; 
+        }
         div[id^="box-"] .row-overall:last-child { margin-bottom: 0; } 
 
-        .platform-name { color: #d1d5db; line-height: 1.3; font-weight: 500; }
-        .value-col { text-align: right; font-weight: 600; white-space: nowrap; color: #fff;}
-        .diff-col { text-align: right; font-size: 13px; font-weight: 600; white-space: nowrap; min-width: 75px; }
+        .platform-name { color: #d1d5db; line-height: 1.3; font-weight: 500; flex: 1; padding-right: 10px; }
+        .value-col { text-align: right; font-weight: 600; white-space: nowrap; color: #fff; width: auto; min-width: 90px; }
+        .diff-col { text-align: right; font-size: 13px; font-weight: 600; white-space: nowrap; width: 85px; padding-left: 10px; }
 
         /* --- กล่อง Total ด้านบน --- */
         .total-box-container { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
@@ -92,7 +105,7 @@
         .total-box .val { margin: 0; font-size: 34px; font-weight: 800; letter-spacing: 1px;}
         .total-box .diff { margin-top: 8px; font-size: 14px; font-weight: 700; }
 
-        /* --- ตารางแบบ Canva --- */
+        /* --- ตารางแบบ Canva (ปรับสัดส่วนความกว้างใหม่) --- */
         .canva-table-container { background-color: transparent; width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .canva-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
         .canva-table td { padding: 11px 15px; color: #4c3c6d; font-weight: 700; }
@@ -103,8 +116,9 @@
         .canva-table tr.section-title { background-color: #1f2029; color: #ffffff; }
         .canva-table tr.section-title td { color: #ffffff; font-weight: 700; font-size: 13px; padding: 12px 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .song-name { text-align: left; width: 50%; padding-left: 25px !important; }
-        .song-value { text-align: right; width: 25%; }
+        /* ปรับสัดส่วนคอลัมน์ใหม่ตามที่คุณขอ (40% / 35% / 25%) */
+        .song-name { text-align: left; width: 40%; padding-left: 25px !important; }
+        .song-value { text-align: right; width: 35%; }
         .song-diff { text-align: right; width: 25%; padding-right: 25px !important; }
 
         .up { color: #10b981; }
@@ -134,21 +148,28 @@
                     <h1 id="main-title"><span>TEN</span>STATISTIC</h1>
                     <p id="sub-title-overall">TEN LEE TEAM</p>
                 </div>
+                
+                <!-- โครงสร้าง Grid แบบ 3 คอลัมน์ -->
                 <div class="grid-container">
+                    
+                    <!-- คอลัมน์ 1: Social & YT Base & Spo Base -->
                     <div class="col-layout">
                         <div class="stat-box-overall"><div class="header h-purple">SOCIAL FOLLOWERS</div><div id="box-social"></div></div>
                         <div class="stat-box-overall"><div class="header h-red">YOUTUBE BASE</div><div id="box-yt-base"></div></div>
+                        <div class="stat-box-overall"><div class="header h-orange">SPOTIFY BASE</div><div id="box-spotify-base"></div></div>
                     </div>
+                    
+                    <!-- คอลัมน์ 2: YouTube Views (กล่องใหญ่เดี่ยวๆ) -->
                     <div class="col-layout">
                         <div class="stat-box-overall"><div class="header h-red">YOUTUBE VIEWS</div><div id="box-yt-views"></div></div>
                     </div>
-                    <div class="col-layout col-mid">
-                        <div class="stat-box-overall"><div class="header h-orange">SPOTIFY STREAMS <br>(TOP 10)</div><div id="box-spotify-streams"></div></div>
-                    </div>
+                    
+                    <!-- คอลัมน์ 3: Spotify Streams & Listeners -->
                     <div class="col-layout">
+                        <div class="stat-box-overall"><div class="header h-orange">SPOTIFY STREAMS <br>(TOP 10)</div><div id="box-spotify-streams"></div></div>
                         <div class="stat-box-overall"><div class="header h-orange">SPOTIFY LISTENERS <br>(TOP 5)</div><div id="box-spotify-list"></div></div>
-                        <div class="stat-box-overall"><div class="header h-orange">SPOTIFY BASE</div><div id="box-spotify-base"></div></div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -436,7 +457,6 @@
             pages.forEach((page, index) => {
                 let headerHtml = '';
                 
-                // แก้ไขหัวข้อเป็นสีทึบ (Solid Color) ตามที่รีเควส
                 if (isSpo) {
                     headerHtml = `
                     <div style="text-align: center; margin-bottom: 30px; position: relative;">
@@ -448,7 +468,7 @@
                 } else {
                     headerHtml = `
                     <div style="text-align: center; margin-bottom: 30px; position: relative;">
-                        <h1 style="margin: 0; font-size: 64px; font-weight: 800; color: #8B0000; letter-spacing: 2px;">
+                        <h1 style="margin: 0; font-size: 64px; font-weight: 800; color: #942222; letter-spacing: 2px;">
                             <span style="text-transform: none;">YouTube</span> MUSIC STREAMS
                         </h1>
                         <p style="margin: 10px 0 0 0; font-size: 16px; color: #4b5563; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">TEN LEE TEAM • ${dateVal || '5/10/26'}</p>
