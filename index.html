@@ -26,7 +26,7 @@
         .tab-section { display: none; margin: 0 auto; }
         .tab-section.active { display: block; }
 
-        /* --- กรอบของแผ่น Spotify / YT Music --- */
+        /* --- กรอบของแผ่น Spotify / YT Music / Charts --- */
         .page-slice {
             background-color: #f3effc;
             padding: 40px;
@@ -60,7 +60,6 @@
         .overall-header p { margin: 12px 0 0 0; font-size: 18px; color: #4b5563; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
         .overall-header::after { content: ''; display: block; width: 100px; height: 4px; background: linear-gradient(90deg, #a855f7, #f97316); margin: 25px auto 0; border-radius: 2px; }
 
-        /* ปรับขนาดคอลัมน์ให้รวมกันพอดีเป๊ะกับความกว้างหน้าจอ */
         .grid-container { display: flex; gap: 20px; justify-content: center; align-items: start; width: 100%; }
         .col-layout { display: flex; flex-direction: column; gap: 22px; }
         .col-layout:nth-child(1) { width: 295px; }
@@ -70,7 +69,7 @@
         
         .stat-box-overall { 
             background-color: #1c1c24; color: #ffffff; 
-            padding: 24px 18px; /* ลด padding ซ้ายขวา เพื่อเพิ่มพื้นที่ตรงกลาง */
+            padding: 24px 18px; 
             border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
             box-sizing: border-box; display: block; width: 100%;
         }
@@ -84,7 +83,6 @@
         .h-red { color: #ef4444; border-bottom: 3px solid #ef4444; }    
         .h-orange { color: #f97316; border-bottom: 3px solid #f97316; } 
 
-        /* โครงสร้างอมตะ! ล็อกความกว้างตัวเลข ห้ามเบี้ยว ห้ามล้น */
         .row-overall { 
             display: flex; 
             justify-content: space-between; 
@@ -98,16 +96,16 @@
         .platform-name { 
             color: #d1d5db; line-height: 1.3; font-weight: 500; 
             text-align: left; flex: 1; padding-right: 5px; 
-            word-wrap: break-word; /* ยอมให้ตกบรรทัดได้ถ้าชื่อยาว */
+            word-wrap: break-word;
         }
         .value-col { 
             text-align: right; font-weight: 600; color: #fff; 
-            width: 82px; /* ล็อกความกว้างช่องตัวเลข */
+            width: 82px; 
             flex-shrink: 0; white-space: nowrap; 
         }
         .diff-col { 
             text-align: right; font-size: 11.5px; font-weight: 600; 
-            width: 80px; /* ล็อกความกว้างช่องลูกศร */
+            width: 80px; 
             flex-shrink: 0; line-height: 1.2; 
         }
 
@@ -118,7 +116,7 @@
         .total-box .val { margin: 0; font-size: 34px; font-weight: 800; letter-spacing: 1px;}
         .total-box .diff { margin-top: 8px; font-size: 14px; font-weight: 700; }
 
-        /* --- ตารางแบบ Canva --- */
+        /* --- ตารางแบบ Canva (ทั่วไป) --- */
         .canva-table-container { background-color: transparent; width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .canva-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
         .canva-table td { padding: 11px 15px; color: #4c3c6d; font-weight: 700; }
@@ -137,6 +135,60 @@
         .down { color: #ef4444; }
         .equal { color: #8b5cf6; } 
 
+        /* --- หน้า Charts --- */
+        #charts-page {
+            width: 1200px; /* ขนาดให้พอดีกับตารางแนวนอน */
+            background-color: #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            box-sizing: border-box;
+            min-height: 800px; /* auto-height ตามข้อมูล */
+        }
+
+        .charts-wrapper {
+            background-color: #1f2029; /* Dark theme */
+            width: 100%;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-sizing: border-box;
+        }
+
+        .charts-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            color: #ffffff;
+        }
+        
+        .charts-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #2d2e3b;
+        }
+        
+        .charts-table tr.data-row td {
+            font-weight: 600;
+        }
+
+        .charts-table tr.data-row:nth-child(even) { background-color: #262732; }
+        .charts-table tr.data-row:nth-child(odd) { background-color: #1f2029; }
+
+        /* สีหัวข้อตาราง Charts ตามแพลตฟอร์ม */
+        .chart-header {
+            font-weight: 800 !important;
+            color: #1f2029 !important; /* ตัวหนังสือสีเข้มเพื่อให้ตัดกับพื้นหลังสี */
+        }
+        .chart-header td {
+            border-bottom: none !important;
+        }
+        .bg-spotify { background-color: #7bb783 !important; }
+        .bg-deezer { background-color: #5c2e91 !important; color: #ffffff !important; } /* สีม่วงเข้ม ตัวหนังสือขาว */
+        .bg-shazam { background-color: #0088cc !important; color: #ffffff !important; } /* สีฟ้า ตัวหนังสือขาว */
+        .bg-itunes { background-color: #b0a8b9 !important; }
+
         .btn-download { margin-top: 10px; background-color: #a855f7; color: white; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(168, 85, 247, 0.3); transition: 0.2s; }
         .btn-download:hover { background-color: #9333ea; transform: translateY(-2px); }
         #loading { font-weight: bold; margin-bottom: 20px; font-size: 18px; color: #333; }
@@ -148,6 +200,7 @@
         <button class="tab-btn active" onclick="switchTab('tab-overall')">📊 OVERALL</button>
         <button class="tab-btn" onclick="switchTab('tab-spo')">🎧 SPOTIFY</button>
         <button class="tab-btn" onclick="switchTab('tab-ytms')">🎵 YT MUSIC</button>
+        <button class="tab-btn" onclick="switchTab('tab-charts')">📈 CHARTS</button>
     </div>
 
     <div id="loading">⏳ กำลังประมวลผลข้อมูล และจัดหน้ากระดาษ...</div>
@@ -194,12 +247,29 @@
         <div id="content-ytms"></div>
     </div>
 
+    <!-- แท็บ 4: CHARTS -->
+    <div class="tab-section" id="tab-charts">
+        <div class="page-slice" id="charts-page" style="width: 1200px;">
+            <div class="overall-header" style="margin-bottom: 30px;">
+                <h1 style="font-size: 56px; color: #111827; margin: 0;"><span>TEN's</span> Music Charts</h1>
+                <p id="sub-title-charts" style="margin-top: 10px; font-size: 20px; font-weight: 700; color: #111827; letter-spacing: 1px;">TEN LEE TEAM</p>
+            </div>
+            
+            <div class="charts-wrapper">
+                <table class="charts-table" id="table-charts">
+                    <!-- ข้อมูล Charts จะถูกแทรกที่นี่ -->
+                </table>
+            </div>
+        </div>
+    </div>
+
     <button class="btn-download" onclick="saveAsImage()" style="display: none;" id="btn-save">📸 ดาวน์โหลดรูปภาพทั้งหมดในหน้านี้</button>
 
     <script>
         const CSV_OVERALL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=60150505&single=true&output=csv';
         const CSV_SPO = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=907365518&single=true&output=csv'; 
         const CSV_YTMS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=1171176371&single=true&output=csv'; 
+        const CSV_CHARTS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=1645940158&single=true&output=csv';
 
         let currentActiveTab = 'tab-overall';
 
@@ -272,7 +342,6 @@
                 let cleanDiff = formatDiff(colD);
                 if(cleanDiff.includes('for 7 days')) cleanDiff = cleanDiff.replace('for 7 days', '<br>for 7 days');
                 
-                // ใช้ HTML div คู่กับ Flexbox ตัวใหม่ รับรองไม่มีวันเบี้ยว
                 const rowHtml = `<div class="row-overall">
                     <div class="platform-name">${colB}</div>
                     <div class="value-col">${formatNumber(colC)}</div>
@@ -295,14 +364,13 @@
             document.getElementById('box-yt-views').innerHTML = htmlYtViews;
         }
 
-        // --- เพิ่มระบบล้างเครื่องหมายฝนทองป้องก้นการดึงเพลงพลาด ---
+        // --- ระบบล้างเครื่องหมายฝนทองป้องกันการดึงเพลงพลาด ---
         function reorderSingleSongs(data) {
             let birthdayIndex = -1;
             let songsToMove = [];
             let targetSongs = ["If You Don't Mean It", "No Pressure", "OUTWEST", "IRL"];
             let newData = [];
 
-            // ฟังก์ชันช่วยล้างฝนทอง (' และ ’) ออก
             const cleanStr = (s) => String(s || '').toLowerCase().replace(/['"’]/g, '').trim();
 
             for (let i = 0; i < data.length; i++) {
@@ -515,19 +583,81 @@
             document.getElementById(tabContentId).innerHTML = finalHtml;
         }
 
+        // --- ประมวลผลหน้า CHARTS ---
+        function processCharts(data) {
+            let html = '';
+            let dateVal = '10/10/26'; // ค่าเริ่มต้น
+
+            data.forEach(row => {
+                if (!row) return;
+
+                // ตรวจหาวันที่จากแถวแรกๆ
+                if (row[1] && String(row[1]).includes('TEN\'s Music Charts')) {
+                    let parts = String(row[1]).split(':');
+                    if(parts.length > 1) dateVal = parts[1].trim();
+                    document.getElementById('sub-title-charts').innerText = "TEN LEE TEAM • " + dateVal;
+                    return;
+                }
+
+                // ข้ามแถวว่าง
+                if (!row[1] && !row[2] && !row[3] && !row[4]) return;
+
+                let colB = String(row[1] || '').trim(); // Category (เช่น Top Songs)
+                let colC = String(row[2] || '').trim(); // Country
+                let colD = String(row[3] || '').trim(); // Name
+                let colE = String(row[4] || '').trim(); // No.
+                let colF = String(row[5] || '').trim(); // Diff
+
+                // ตรวจสอบว่าคอลัมน์ E (Index 4) คือคำว่า "No." หรือไม่
+                if (colE.toUpperCase() === 'NO.') {
+                    // นี่คือแถวหัวข้อ! เช็คชื่อแพลตฟอร์มจาก colB ว่าจะใช้สีอะไร
+                    let bgClass = 'bg-itunes'; // สีตั้งต้น (เบจ/เทา)
+                    let platformName = colB.toLowerCase();
+                    
+                    if (platformName.includes('spotify')) bgClass = 'bg-spotify';
+                    else if (platformName.includes('deezer')) bgClass = 'bg-deezer';
+                    else if (platformName.includes('shazam')) bgClass = 'bg-shazam';
+
+                    html += `<tr class="chart-header ${bgClass}">
+                        <td style="text-align: left; width: 30%; padding-left: 20px;">${colB}</td>
+                        <td style="width: 20%;">${colC}</td>
+                        <td style="width: 25%;">${colD}</td>
+                        <td style="width: 10%;">${colE}</td>
+                        <td style="width: 15%; text-align: right; padding-right: 20px;">${formatDiff(colF) || '<span style="color:#ef4444">▲ ▼</span>'}</td>
+                    </tr>`;
+                } 
+                // ถ้าไม่ใช่ No. แต่มีข้อมูลครบ แสดงว่าเป็นแถวข้อมูล (Data Row)
+                else if (colB && colC && colD && colE) {
+                    html += `<tr class="data-row">
+                        <td style="text-align: left; padding-left: 20px;">${colB}</td>
+                        <td>${colC}</td>
+                        <td>${colD}</td>
+                        <td>${formatNumber(colE)}</td>
+                        <td style="text-align: right; padding-right: 20px;">${formatDiff(colF)}</td>
+                    </tr>`;
+                }
+            });
+
+            document.getElementById('table-charts').innerHTML = html;
+        }
+
         async function loadAllData() {
             try {
-                const [dataOverall, dataSpo, dataYtms] = await Promise.all([
+                const [dataOverall, dataSpo, dataYtms, dataCharts] = await Promise.all([
                     fetchCSV(CSV_OVERALL),
                     fetchCSV(CSV_SPO),
-                    fetchCSV(CSV_YTMS)
+                    fetchCSV(CSV_YTMS),
+                    fetchCSV(CSV_CHARTS)
                 ]);
 
                 if (dataOverall) processOverall(dataOverall);
                 if (dataSpo) processCanvaTableSplitted(dataSpo, 'content-spo', true);
                 if (dataYtms) processCanvaTableSplitted(dataYtms, 'content-ytms', false);
+                if (dataCharts) processCharts(dataCharts);
 
                 document.getElementById('loading').style.display = 'none';
+                
+                // แสดงปุ่มเซฟรูปให้ตรงกับแท็บที่เปิดอยู่
                 document.getElementById('btn-save').style.display = 'block';
             } catch (error) {
                 console.error("Load all data error: ", error);
@@ -537,10 +667,14 @@
 
         window.onload = loadAllData;
 
+        // ฟังก์ชันดาวน์โหลดภาพแบบเดิม (ไม่มัด ZIP)
         async function saveAsImage() {
             const btn = document.getElementById('btn-save');
             const oldText = btn.innerText;
-            btn.innerText = '⏳ กำลังประมวลผลและแคปภาพ...';
+            btn.innerText = '⏳ กำลังประมวลผลและแคปภาพ... (กรุณารอสักครู่)';
+
+            // หน่วงเวลาให้จัดหน้าเสร็จ
+            await new Promise(r => setTimeout(r, 1500));
 
             let targets = [];
             let prefixName = '';
@@ -554,13 +688,23 @@
             } else if (currentActiveTab === 'tab-ytms') {
                 targets = Array.from(document.querySelectorAll('#content-ytms .page-slice'));
                 prefixName = 'YTMusic';
+            } else if (currentActiveTab === 'tab-charts') {
+                targets = [document.getElementById('charts-page')];
+                prefixName = 'Charts';
             }
 
             for (let i = 0; i < targets.length; i++) {
+                // กำหนดสี Background ตอนแคปรูปให้ตรงกับแท็บ
+                let bgColor = '#f3effc'; // Default สำหรับ SPO/YTMS
+                if(currentActiveTab === 'tab-overall' || currentActiveTab === 'tab-charts') {
+                    bgColor = '#e5e7eb';
+                }
+
                 const canvas = await html2canvas(targets[i], {
                     scale: 2, 
-                    backgroundColor: currentActiveTab === 'tab-overall' ? '#e5e7eb' : '#f3effc', 
-                    useCORS: true
+                    backgroundColor: bgColor, 
+                    useCORS: true,
+                    logging: false
                 });
                 
                 const link = document.createElement('a');
@@ -569,7 +713,8 @@
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 
-                await new Promise(resolve => setTimeout(resolve, 500));
+                // รอ 0.8 วินาทีระหว่างการโหลดแต่ละแผ่น
+                await new Promise(resolve => setTimeout(resolve, 800));
             }
 
             btn.innerText = oldText;
