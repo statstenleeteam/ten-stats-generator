@@ -52,53 +52,64 @@
             box-sizing: border-box;
         }
         
-        .overall-content-wrapper { width: 100%; max-width: 1310px; }
+        .overall-content-wrapper { width: 100%; max-width: 1270px; }
 
-        /* ขยายหัวข้อกลับมาใหญ่ 68px */
         .overall-header { text-align: center; margin-bottom: 40px; position: relative; }
         .overall-header h1 { margin: 0; font-size: 68px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: #111827; }
         .overall-header h1 span { color: #9333ea; font-style: italic; padding-right: 8px; }
         .overall-header p { margin: 12px 0 0 0; font-size: 18px; color: #4b5563; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
         .overall-header::after { content: ''; display: block; width: 100px; height: 4px; background: linear-gradient(90deg, #a855f7, #f97316); margin: 25px auto 0; border-radius: 2px; }
 
-        /* โครงสร้าง 4 คอลัมน์ที่สมดุล ไม่เบี้ยวขวา */
+        /* ปรับขนาดคอลัมน์ให้รวมกันพอดีเป๊ะกับความกว้างหน้าจอ */
         .grid-container { display: flex; gap: 20px; justify-content: center; align-items: start; width: 100%; }
-        .col-layout { display: flex; flex-direction: column; gap: 25px; }
-        /* กำหนดความกว้างคอลัมน์ให้พอดี เพื่อไม่ให้ล้นไปข้างใดข้างหนึ่ง */
-        .col-layout:nth-child(1) { width: 305px; }
-        .col-layout:nth-child(2) { width: 335px; }
-        .col-layout:nth-child(3) { width: 335px; }
-        .col-layout:nth-child(4) { width: 305px; }
+        .col-layout { display: flex; flex-direction: column; gap: 22px; }
+        .col-layout:nth-child(1) { width: 295px; }
+        .col-layout:nth-child(2) { width: 310px; }
+        .col-layout:nth-child(3) { width: 310px; }
+        .col-layout:nth-child(4) { width: 295px; }
         
         .stat-box-overall { 
-            background-color: #1c1c24; color: #ffffff; padding: 25px 25px; border-radius: 12px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box; 
-            display: block; width: 100%;
+            background-color: #1c1c24; color: #ffffff; 
+            padding: 24px 18px; /* ลด padding ซ้ายขวา เพื่อเพิ่มพื้นที่ตรงกลาง */
+            border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+            box-sizing: border-box; display: block; width: 100%;
         }
         
         .header { 
             font-size: 15px; font-weight: 700; letter-spacing: 1px; 
-            padding-bottom: 12px; margin-bottom: 25px; text-transform: uppercase; 
+            padding-bottom: 12px; margin-bottom: 20px; text-transform: uppercase; 
             width: 100%; display: block;
         }
         .h-purple { color: #a855f7; border-bottom: 3px solid #a855f7; }
         .h-red { color: #ef4444; border-bottom: 3px solid #ef4444; }    
         .h-orange { color: #f97316; border-bottom: 3px solid #f97316; } 
 
-        /* ระบบ Grid สำหรับตัวเลข (รับประกันความตรงแนว 100%) */
+        /* โครงสร้างอมตะ! ล็อกความกว้างตัวเลข ห้ามเบี้ยว ห้ามล้น */
         .row-overall { 
-            display: grid; 
-            grid-template-columns: 1fr 90px 85px; /* ล็อกความกว้างช่องตัวเลขและช่องดิฟ */
-            gap: 8px; 
-            margin-bottom: 15px; 
-            font-size: 14px; 
+            display: flex; 
+            justify-content: space-between; 
             align-items: center; 
+            margin-bottom: 14px; 
+            font-size: 13.5px; 
+            width: 100%; 
         }
         div[id^="box-"] .row-overall:last-child { margin-bottom: 0; } 
 
-        .platform-name { color: #d1d5db; line-height: 1.3; font-weight: 500; text-align: left; }
-        .value-col { text-align: right; font-weight: 600; color: #fff; white-space: nowrap; }
-        .diff-col { text-align: right; font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .platform-name { 
+            color: #d1d5db; line-height: 1.3; font-weight: 500; 
+            text-align: left; flex: 1; padding-right: 5px; 
+            word-wrap: break-word; /* ยอมให้ตกบรรทัดได้ถ้าชื่อยาว */
+        }
+        .value-col { 
+            text-align: right; font-weight: 600; color: #fff; 
+            width: 82px; /* ล็อกความกว้างช่องตัวเลข */
+            flex-shrink: 0; white-space: nowrap; 
+        }
+        .diff-col { 
+            text-align: right; font-size: 11.5px; font-weight: 600; 
+            width: 80px; /* ล็อกความกว้างช่องลูกศร */
+            flex-shrink: 0; line-height: 1.2; 
+        }
 
         /* --- กล่อง Total ด้านบน --- */
         .total-box-container { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
@@ -151,23 +162,19 @@
                 </div>
                 
                 <div class="grid-container">
-                    <!-- คอลัมน์ 1 -->
                     <div class="col-layout">
                         <div class="stat-box-overall"><div class="header h-purple">SOCIAL FOLLOWERS</div><div id="box-social"></div></div>
                         <div class="stat-box-overall"><div class="header h-red">YOUTUBE BASE</div><div id="box-yt-base"></div></div>
                     </div>
                     
-                    <!-- คอลัมน์ 2 -->
                     <div class="col-layout">
                         <div class="stat-box-overall"><div class="header h-red">YOUTUBE VIEWS</div><div id="box-yt-views"></div></div>
                     </div>
                     
-                    <!-- คอลัมน์ 3 -->
                     <div class="col-layout">
                         <div class="stat-box-overall"><div class="header h-orange">SPOTIFY STREAMS <br>(TOP 10)</div><div id="box-spotify-streams"></div></div>
                     </div>
 
-                    <!-- คอลัมน์ 4 -->
                     <div class="col-layout">
                         <div class="stat-box-overall"><div class="header h-orange">SPOTIFY LISTENERS <br>(TOP 5)</div><div id="box-spotify-list"></div></div>
                         <div class="stat-box-overall"><div class="header h-orange">SPOTIFY BASE</div><div id="box-spotify-base"></div></div>
@@ -265,11 +272,11 @@
                 let cleanDiff = formatDiff(colD);
                 if(cleanDiff.includes('for 7 days')) cleanDiff = cleanDiff.replace('for 7 days', '<br>for 7 days');
                 
-                // ถอด .stats-group ออก คืนชีพ Grid แบบล็อกความกว้าง ให้แถวตรงกันเป๊ะ
+                // ใช้ HTML div คู่กับ Flexbox ตัวใหม่ รับรองไม่มีวันเบี้ยว
                 const rowHtml = `<div class="row-overall">
-                    <span class="platform-name">${colB}</span>
-                    <span class="value-col">${formatNumber(colC)}</span>
-                    <span class="diff-col">${cleanDiff}</span>
+                    <div class="platform-name">${colB}</div>
+                    <div class="value-col">${formatNumber(colC)}</div>
+                    <div class="diff-col">${cleanDiff}</div>
                 </div>`;
 
                 if (currentCategory === 'social') htmlSocial += rowHtml;
