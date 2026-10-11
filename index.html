@@ -26,7 +26,7 @@
         .tab-section { display: none; margin: 0 auto; }
         .tab-section.active { display: block; }
 
-        /* --- กรอบของแผ่น Spotify / YT Music (Auto Height) --- */
+        /* --- กรอบของแผ่น Spotify / YT Music --- */
         .page-slice {
             background-color: #f3effc;
             padding: 40px;
@@ -39,27 +39,27 @@
             min-height: 200px;
         }
 
-        /* --- หน้า Overall (จัดกึ่งกลางแนวตั้ง) --- */
+        /* --- หน้า Overall --- */
         #overall-page {
             width: 1350px; 
-            height: 1012px; /* ล็อกสัดส่วน 4:3 */
+            height: 1012px; 
             background-color: #e5e7eb; 
             display: flex; 
             flex-direction: column; 
-            justify-content: center; /* จัดให้อยู่ตรงกลาง ไม่เหลือที่ว่างแค่ด้านล่าง */
+            justify-content: center; 
             align-items: center;
             padding: 40px;
         }
         
         .overall-content-wrapper { width: 100%; max-width: 1270px; }
 
+        /* ปรับขนาดหัวข้อ Overall ให้ใหญ่ขึ้นเท่า Spotify */
         .overall-header { text-align: center; margin-bottom: 40px; position: relative; }
-        .overall-header h1 { margin: 0; font-size: 56px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: #111827; }
+        .overall-header h1 { margin: 0; font-size: 68px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: #111827; }
         .overall-header h1 span { color: #9333ea; font-style: italic; padding-right: 8px; }
         .overall-header p { margin: 12px 0 0 0; font-size: 18px; color: #4b5563; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
-        .overall-header::after { content: ''; display: block; width: 100px; height: 4px; background: linear-gradient(90deg, #a855f7, #f97316); margin: 20px auto 0; border-radius: 2px; }
+        .overall-header::after { content: ''; display: block; width: 100px; height: 4px; background: linear-gradient(90deg, #a855f7, #f97316); margin: 25px auto 0; border-radius: 2px; }
 
-        /* ไม่บังคับความสูงแล้ว ให้กล่องเรียงตัวตามธรรมชาติ */
         .grid-container { display: flex; gap: 20px; align-items: start; width: 100%; }
         .col-layout { display: flex; flex-direction: column; gap: 25px; width: 310px; }
         .col-mid { width: 360px; }
@@ -67,8 +67,7 @@
         .stat-box-overall { 
             background-color: #1c1c24; color: #ffffff; padding: 30px; border-radius: 14px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box; 
-            display: block; /* กล่องจะหดรัดเข้ารูปเนื้อหาพอดีเป๊ะ */
-            width: 100%;
+            display: block; width: 100%;
         }
         
         .header { 
@@ -81,7 +80,7 @@
         .h-orange { color: #f97316; border-bottom: 3px solid #f97316; } 
 
         .row-overall { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; margin-bottom: 18px; font-size: 14.5px; align-items: center; }
-        div[id^="box-"] .row-overall:last-child { margin-bottom: 0; } /* บรรทัดสุดท้ายไม่ต้องมีระยะห่าง เพื่อไม่ให้เหลือที่ว่างล่างกล่อง */
+        div[id^="box-"] .row-overall:last-child { margin-bottom: 0; } 
 
         .platform-name { color: #d1d5db; line-height: 1.3; font-weight: 500; }
         .value-col { text-align: right; font-weight: 600; white-space: nowrap; color: #fff;}
@@ -94,20 +93,21 @@
         .total-box .val { margin: 0; font-size: 34px; font-weight: 800; letter-spacing: 1px;}
         .total-box .diff { margin-top: 8px; font-size: 14px; font-weight: 700; }
 
-        /* --- ตารางแบบ Canva --- */
+        /* --- ตารางแบบ Canva (ปรับสัดส่วนความกว้างใหม่) --- */
         .canva-table-container { background-color: transparent; width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .canva-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        .canva-table td { padding: 9px 15px; color: #4c3c6d; font-weight: 600; }
+        .canva-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+        .canva-table td { padding: 11px 15px; color: #4c3c6d; font-weight: 700; }
         
         .canva-table tr.data-row:nth-child(even) { background-color: #ffffff; }
         .canva-table tr.data-row:nth-child(odd) { background-color: #ece5fa; }
 
         .canva-table tr.section-title { background-color: #1f2029; color: #ffffff; }
-        .canva-table tr.section-title td { color: #ffffff; font-weight: 700; font-size: 13px; padding: 10px 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .canva-table tr.section-title td { color: #ffffff; font-weight: 700; font-size: 13px; padding: 12px 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .song-name { text-align: left; }
-        .song-value { text-align: center; width: 120px; }
-        .song-diff { text-align: right; width: 120px; }
+        /* ขยับสัดส่วนให้พอดี ไม่ชิดขวาเกินไป */
+        .song-name { text-align: left; width: 50%; padding-left: 25px !important; }
+        .song-value { text-align: right; width: 25%; }
+        .song-diff { text-align: right; width: 25%; padding-right: 25px !important; }
 
         .up { color: #10b981; }
         .down { color: #ef4444; }
@@ -438,20 +438,19 @@
             pages.forEach((page, index) => {
                 let headerHtml = '';
                 if (isSpo) {
+                    // แก้ไข Stroke ให้เนียนกริบ โดยเติมสีข้อความให้กลืนกับพื้นหลัง
                     headerHtml = `
                     <div style="text-align: center; margin-bottom: 30px; position: relative;">
-                        <h1 style="margin: 0; font-size: 52px; font-weight: 800; color: transparent; -webkit-text-stroke: 1.5px #8b5cf6; text-transform: uppercase; letter-spacing: 2px; position: relative;">
+                        <h1 style="margin: 0; font-size: 64px; font-weight: 800; color: #f3effc; -webkit-text-stroke: 2px #8b5cf6; text-transform: uppercase; letter-spacing: 2px;">
                             SPOTIFY STREAMS
-                            <span style="position: absolute; top: 0; left: 0; right: 0; color: #ffffff; -webkit-text-stroke: 0; z-index: -1;">SPOTIFY STREAMS</span>
                         </h1>
                         <p style="margin: 10px 0 0 0; font-size: 16px; color: #4b5563; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">TEN LEE TEAM • ${dateVal || '9/10/26'}</p>
                     </div>`;
                 } else {
                     headerHtml = `
                     <div style="text-align: center; margin-bottom: 30px; position: relative;">
-                        <h1 style="margin: 0; font-size: 52px; font-weight: 800; color: transparent; -webkit-text-stroke: 1.5px #ef4444; letter-spacing: 2px; position: relative;">
+                        <h1 style="margin: 0; font-size: 64px; font-weight: 800; color: #f3effc; -webkit-text-stroke: 2px #ef4444; letter-spacing: 2px;">
                             <span style="text-transform: none;">YouTube</span> MUSIC STREAMS
-                            <span style="position: absolute; top: 0; left: 0; right: 0; color: #ffffff; -webkit-text-stroke: 0; z-index: -1;"><span style="text-transform: none;">YouTube</span> MUSIC STREAMS</span>
                         </h1>
                         <p style="margin: 10px 0 0 0; font-size: 16px; color: #4b5563; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">TEN LEE TEAM • ${dateVal || '5/10/26'}</p>
                     </div>`;
