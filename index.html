@@ -26,7 +26,7 @@
         .tab-section { display: none; margin: 0 auto; }
         .tab-section.active { display: block; }
 
-        /* --- กรอบของแผ่น Spotify / YT Music --- */
+        /* --- กรอบของแผ่น Spotify / YT Music (Auto Height) --- */
         .page-slice {
             background-color: #f3effc;
             padding: 40px;
@@ -39,10 +39,10 @@
             min-height: 200px;
         }
 
-        /* --- หน้า Overall --- */
+        /* --- หน้า Overall (จัดกึ่งกลางแนวตั้ง) --- */
         #overall-page {
             width: 1350px; 
-            height: 1012px; 
+            height: 1012px; /* ล็อกสัดส่วน 4:3 */
             background-color: #e5e7eb; 
             display: flex; 
             flex-direction: column; 
@@ -53,7 +53,6 @@
         
         .overall-content-wrapper { width: 100%; max-width: 1270px; }
 
-        /* ปรับขนาดหัวข้อ Overall ให้ใหญ่ขึ้นเท่า Spotify */
         .overall-header { text-align: center; margin-bottom: 40px; position: relative; }
         .overall-header h1 { margin: 0; font-size: 68px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: #111827; }
         .overall-header h1 span { color: #9333ea; font-style: italic; padding-right: 8px; }
@@ -93,7 +92,7 @@
         .total-box .val { margin: 0; font-size: 34px; font-weight: 800; letter-spacing: 1px;}
         .total-box .diff { margin-top: 8px; font-size: 14px; font-weight: 700; }
 
-        /* --- ตารางแบบ Canva (ปรับสัดส่วนความกว้างใหม่) --- */
+        /* --- ตารางแบบ Canva --- */
         .canva-table-container { background-color: transparent; width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .canva-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
         .canva-table td { padding: 11px 15px; color: #4c3c6d; font-weight: 700; }
@@ -104,7 +103,6 @@
         .canva-table tr.section-title { background-color: #1f2029; color: #ffffff; }
         .canva-table tr.section-title td { color: #ffffff; font-weight: 700; font-size: 13px; padding: 12px 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ขยับสัดส่วนให้พอดี ไม่ชิดขวาเกินไป */
         .song-name { text-align: left; width: 50%; padding-left: 25px !important; }
         .song-value { text-align: right; width: 25%; }
         .song-diff { text-align: right; width: 25%; padding-right: 25px !important; }
@@ -437,11 +435,12 @@
             let finalHtml = '';
             pages.forEach((page, index) => {
                 let headerHtml = '';
+                
+                // แก้ไขหัวข้อเป็นสีทึบ (Solid Color) ตามที่รีเควส
                 if (isSpo) {
-                    // แก้ไข Stroke ให้เนียนกริบ โดยเติมสีข้อความให้กลืนกับพื้นหลัง
                     headerHtml = `
                     <div style="text-align: center; margin-bottom: 30px; position: relative;">
-                        <h1 style="margin: 0; font-size: 64px; font-weight: 800; color: #f3effc; -webkit-text-stroke: 2px #8b5cf6; text-transform: uppercase; letter-spacing: 2px;">
+                        <h1 style="margin: 0; font-size: 64px; font-weight: 800; color: #B57EDC; text-transform: uppercase; letter-spacing: 2px;">
                             SPOTIFY STREAMS
                         </h1>
                         <p style="margin: 10px 0 0 0; font-size: 16px; color: #4b5563; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">TEN LEE TEAM • ${dateVal || '9/10/26'}</p>
@@ -449,7 +448,7 @@
                 } else {
                     headerHtml = `
                     <div style="text-align: center; margin-bottom: 30px; position: relative;">
-                        <h1 style="margin: 0; font-size: 64px; font-weight: 800; color: #f3effc; -webkit-text-stroke: 2px #ef4444; letter-spacing: 2px;">
+                        <h1 style="margin: 0; font-size: 64px; font-weight: 800; color: #8B0000; letter-spacing: 2px;">
                             <span style="text-transform: none;">YouTube</span> MUSIC STREAMS
                         </h1>
                         <p style="margin: 10px 0 0 0; font-size: 16px; color: #4b5563; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">TEN LEE TEAM • ${dateVal || '5/10/26'}</p>
