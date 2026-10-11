@@ -119,17 +119,6 @@
         .equal { color: #8b5cf6; } 
 
         /* --- หน้า Charts --- */
-        #charts-page {
-            width: 1200px;
-            background-color: #e5e7eb;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px;
-            box-sizing: border-box;
-            min-height: 800px;
-        }
-
         .charts-wrapper {
             background-color: #1f2029; 
             width: 100%;
@@ -152,7 +141,7 @@
         .bg-deezer { background-color: #5c2e91 !important; color: #ffffff !important; } 
         .bg-shazam { background-color: #0088cc !important; color: #ffffff !important; } 
         .bg-itunes { background-color: #b0a8b9 !important; color: #111827 !important;}
-        .bg-billboard { background-color: #c0c0c0 !important; color: #111827 !important; } /* สีเงิน Billboard */
+        .bg-billboard { background-color: #c0c0c0 !important; color: #111827 !important; }
 
         .btn-download { margin-top: 10px; background-color: #a855f7; color: white; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(168, 85, 247, 0.3); transition: 0.2s; }
         .btn-download:hover { background-color: #9333ea; transform: translateY(-2px); }
@@ -212,21 +201,9 @@
         <div id="content-ytms"></div>
     </div>
 
-    <!-- แท็บ 4: CHARTS -->
+    <!-- แท็บ 4: CHARTS (ปรับเป็นตู้สำหรับใส่หน้าย่อย) -->
     <div class="tab-section" id="tab-charts">
-        <div class="page-slice" id="charts-page">
-            <div class="overall-header" style="margin-bottom: 30px;">
-                <h1 style="font-size: 56px; color: #111827; margin: 0;"><span>TEN's</span> Music Charts</h1>
-                <!-- วันที่จะถูกดึงมาใส่ตรงนี้อัตโนมัติ -->
-                <p id="sub-title-charts" style="margin-top: 10px; font-size: 20px; font-weight: 700; color: #111827; letter-spacing: 1px;">TEN LEE TEAM</p>
-            </div>
-            
-            <div class="charts-wrapper">
-                <table class="charts-table" id="table-charts">
-                    <!-- ข้อมูล Charts จะถูกแทรกที่นี่ -->
-                </table>
-            </div>
-        </div>
+        <div id="content-charts"></div>
     </div>
 
     <button class="btn-download" onclick="saveAsImage()" style="display: none;" id="btn-save">📸 ดาวน์โหลดรูปภาพทั้งหมดในหน้านี้</button>
@@ -238,7 +215,7 @@
         const CSV_CHARTS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTS13SniBy8Q6Z-FJlhMVqqQZrTdsC2u_IKaR_4P8kCyJHaDk56_5dsG6jGR3yUOesFAn-L1j8ab2zP/pub?gid=1645940158&single=true&output=csv';
 
         let currentActiveTab = 'tab-overall';
-        let globalDateText = '10/10/26'; // วันที่ตั้งต้น
+        let globalDateText = '10/10/26'; 
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
@@ -292,10 +269,9 @@
                 const colC = row[2] ? String(row[2]).trim() : ''; 
                 const colD = row[3] ? String(row[3]).trim() : ''; 
 
-                // ดึงวันที่หลักจากหน้า Overall ไปใช้ทุกแท็บ
                 if (colB.toUpperCase().includes('TEN STATISTIC')) {
                     globalDateText = colB.replace(/TEN STATISTIC/i, '').replace(':', '').trim();
-                    if(!globalDateText) globalDateText = '10/10/26'; // กันเหนียวกรณีช่องว่าง
+                    if(!globalDateText) globalDateText = '10/10/26'; 
                     document.getElementById('sub-title-overall').innerText = "TEN LEE TEAM • " + globalDateText;
                     return;
                 }
@@ -408,11 +384,7 @@
                 let colDiff = row[3] ? String(row[3]).trim() : '';
                 let rawTitle = rawColA + ' ' + colName;
 
-                // ข้ามการดึงวันที่จากแถวนี้ไปเลย เพราะเราใช้ globalDateText เป็นหลักแล้ว
-                if (rawTitle.includes('Spotify Streams') || rawTitle.includes('YouTube Music Streams') || rawTitle.includes('For ytms') || rawTitle.includes('Weekly')) {
-                    return;
-                }
-
+                if (rawTitle.includes('Spotify Streams') || rawTitle.includes('YouTube Music Streams') || rawTitle.includes('For ytms') || rawTitle.includes('Weekly')) return;
                 if (colName === 'streams' || colVal === 'streams' || (!colName && !colVal)) return;
                 if (colName.toUpperCase() === 'TOTAL ALBUM:' || colName.toUpperCase() === 'TOTAL ALBUM') return;
 
@@ -510,8 +482,6 @@
             let finalHtml = '';
             pages.forEach((page, index) => {
                 let headerHtml = '';
-                
-                // ใช้ตัวแปร globalDateText ที่ดึงมาจากหน้า Overall 
                 if (isSpo) {
                     headerHtml = `
                     <div style="text-align: center; margin-bottom: 30px; position: relative;">
@@ -550,16 +520,12 @@
             document.getElementById(tabContentId).innerHTML = finalHtml;
         }
 
-        // --- ประมวลผลหน้า CHARTS ---
-        function processCharts(data) {
-            let html = '';
-            
-            // นำวันที่อัปเดตล่าสุดจาก Overall มาแปะในหัวข้อ Charts ให้เป๊ะ!
-            document.getElementById('sub-title-charts').innerText = "TEN LEE TEAM • " + globalDateText;
-            
+        // --- เพิ่มระบบ Auto-Pagination ให้หน้า CHARTS ---
+        function processChartsSplitted(data) {
+            let rows = [];
+
             data.forEach(row => {
                 if (!row) return;
-
                 if (row[1] && String(row[1]).includes('TEN\'s Music Charts')) return;
                 if (!row[1] && !row[2] && !row[3] && !row[4]) return;
 
@@ -569,7 +535,7 @@
                 let colE = String(row[4] || '').trim(); 
                 let colF = String(row[5] || '').trim(); 
 
-                // ตรวจหาคำว่า No. ในช่อง E เพื่อสร้างบรรทัดหัวข้อ
+                // แถวหัวข้อ (No.)
                 if (colE.toUpperCase() === 'NO.') {
                     let bgClass = 'bg-itunes'; 
                     let platformName = colB.toLowerCase();
@@ -577,29 +543,67 @@
                     if (platformName.includes('spotify')) bgClass = 'bg-spotify';
                     else if (platformName.includes('deezer')) bgClass = 'bg-deezer';
                     else if (platformName.includes('shazam')) bgClass = 'bg-shazam';
-                    else if (platformName.includes('billboard')) bgClass = 'bg-billboard'; // เพิ่มสีเงินให้ Billboard แล้ว!
+                    else if (platformName.includes('billboard')) bgClass = 'bg-billboard';
 
-                    // บังคับพิมพ์คำว่า Country และ Name ลงในตารางเสมอ
-                    html += `<tr class="chart-header ${bgClass}">
+                    let htmlRow = `<tr class="chart-header ${bgClass}">
                         <td style="text-align: left; width: 30%; padding-left: 20px;">${colB}</td>
                         <td style="width: 20%;">Country</td>
                         <td style="width: 25%;">Name</td>
                         <td style="width: 10%;">No.</td>
                         <td style="width: 15%; text-align: right; padding-right: 20px;">${formatDiff(colF) || '<span style="color:#ef4444">▲ ▼</span>'}</td>
                     </tr>`;
+                    rows.push({ type: 'header', html: htmlRow, height: 46 });
                 } 
+                // แถวข้อมูล
                 else if (colB && colC && colD && colE) {
-                    html += `<tr class="data-row">
+                    let htmlRow = `<tr class="data-row">
                         <td style="text-align: left; padding-left: 20px;">${colB}</td>
                         <td>${colC}</td>
                         <td>${colD}</td>
                         <td>${formatNumber(colE)}</td>
                         <td style="text-align: right; padding-right: 20px;">${formatDiff(colF)}</td>
                     </tr>`;
+                    rows.push({ type: 'data', html: htmlRow, height: 46 });
                 }
             });
 
-            document.getElementById('table-charts').innerHTML = html;
+            // ระบบหั่นหน้ากระดาษ (Pagination) ให้หน้า Charts
+            let pages = [];
+            let currentPage = { rowsHtml: '', height: 200 }; // เผื่อความสูงของ Header และ Padding
+
+            rows.forEach(r => {
+                if (currentPage.height + r.height > 960 && currentPage.height > 200) {
+                    pages.push(currentPage);
+                    currentPage = { rowsHtml: '', height: 200 };
+                }
+                currentPage.rowsHtml += r.html;
+                currentPage.height += r.height;
+            });
+            if (currentPage.rowsHtml !== '') {
+                pages.push(currentPage);
+            }
+
+            let finalHtml = '';
+            pages.forEach((page, index) => {
+                let headerHtml = `
+                <div class="overall-header" style="margin-bottom: 30px;">
+                    <h1 style="font-size: 56px; color: #111827; margin: 0;"><span>TEN's</span> Music Charts</h1>
+                    <p style="margin-top: 10px; font-size: 20px; font-weight: 700; color: #111827; letter-spacing: 1px;">TEN LEE TEAM • ${globalDateText}</p>
+                </div>`;
+
+                finalHtml += `
+                <div class="page-slice" style="width: 1200px; padding-bottom: ${pages.length > 1 ? '60px' : '40px'};">
+                    ${headerHtml}
+                    <div class="charts-wrapper">
+                        <table class="charts-table">
+                            ${page.rowsHtml}
+                        </table>
+                    </div>
+                    ${pages.length > 1 ? `<div style="position: absolute; bottom: 20px; right: 40px; color: #9ca3af; font-size: 12px; font-weight: bold;">Page ${index + 1}/${pages.length}</div>` : ''}
+                </div>`;
+            });
+
+            document.getElementById('content-charts').innerHTML = finalHtml;
         }
 
         async function loadAllData() {
@@ -616,7 +620,7 @@
 
                 if (dataSpo) processCanvaTableSplitted(dataSpo, 'content-spo', true);
                 if (dataYtms) processCanvaTableSplitted(dataYtms, 'content-ytms', false);
-                if (dataCharts) processCharts(dataCharts);
+                if (dataCharts) processChartsSplitted(dataCharts);
 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('btn-save').style.display = 'block';
@@ -628,7 +632,7 @@
 
         window.onload = loadAllData;
 
-        // ระบบดาวน์โหลดภาพแบบ Zip/PNG เดิม
+        // ระบบดาวน์โหลดภาพแบบ Zip/PNG
         async function saveAsImage() {
             const btn = document.getElementById('btn-save');
             const oldText = btn.innerText;
@@ -649,7 +653,7 @@
                 targets = Array.from(document.querySelectorAll('#content-ytms .page-slice'));
                 prefixName = 'YTMusic';
             } else if (currentActiveTab === 'tab-charts') {
-                targets = [document.getElementById('charts-page')];
+                targets = Array.from(document.querySelectorAll('#content-charts .page-slice'));
                 prefixName = 'Charts';
             }
 
@@ -657,9 +661,12 @@
                 const zip = new JSZip();
                 
                 for (let i = 0; i < targets.length; i++) {
+                    let bgColor = '#f3effc'; 
+                    if(currentActiveTab === 'tab-charts') bgColor = '#e5e7eb';
+
                     const canvas = await html2canvas(targets[i], {
                         scale: 2, 
-                        backgroundColor: currentActiveTab === 'tab-overall' ? '#e5e7eb' : '#f3effc', 
+                        backgroundColor: bgColor, 
                         useCORS: true,
                         logging: false 
                     });
@@ -676,9 +683,7 @@
 
             } else {
                 let bgColor = '#f3effc'; 
-                if(currentActiveTab === 'tab-overall' || currentActiveTab === 'tab-charts') {
-                    bgColor = '#e5e7eb';
-                }
+                if(currentActiveTab === 'tab-overall' || currentActiveTab === 'tab-charts') bgColor = '#e5e7eb';
 
                 const canvas = await html2canvas(targets[0], {
                     scale: 2, 
